@@ -83,3 +83,85 @@ Core features:
 - After implementation, test the app and fix layout or JavaScript errors.
 
 Start by creating the main meal plan page and reusable components for meal cards, recipe details, preference forms, grocery categories, and navigation. Then implement the meal generation, recipe display, grocery-list combination, favorites, localStorage, and responsive styling.
+
+
+
+
+
+
+
+
+
+
+Update the meal-planning app with the following features:
+
+1. Shopping List Organization by Day
+- Add a toggle that allows users to view the grocery list in either:
+  - Combined weekly list
+  - Separated by day
+- When “Separated by Day” is selected, organize ingredients under headings such as:
+  - Monday
+  - Tuesday
+  - Wednesday
+  - Thursday
+  - Friday
+  - Saturday
+  - Sunday
+- Each ingredient should show its quantity and the meal it belongs to.
+- Allow users to check off grocery items in either view.
+- Keep checked items synchronized between the combined and daily views.
+- Avoid duplicate ingredients within the same day.
+- Preserve the selected shopping-list view after refreshing the page.
+
+2. Favorites Difficulty Sorting
+- Add difficulty information to every recipe: Easy, Medium, or Hard.
+- Add difficulty filter buttons or a dropdown to the Favorites page.
+- Allow users to sort or filter favorite meals by:
+  - All difficulties
+  - Easy
+  - Medium
+  - Hard
+- Add an optional sort by recipe name, preparation time, or rating.
+- Display the difficulty level clearly on each favorite recipe card.
+- Show a helpful empty-state message if no favorite meals match the selected difficulty.
+
+3. Meal Rating System
+- Add a 0-to-5-star rating system to every recipe.
+- Allow users to select ratings in whole-star increments, including 0 stars.
+- Display the current user’s rating separately from the overall community rating.
+- Calculate and display:
+  - Average rating
+  - Number of ratings
+  - Visual star display
+- Allow users to change their rating.
+- Add accessible labels for the rating buttons so keyboard and screen-reader users can use them.
+- Display ratings on meal cards, recipe-detail pages, favorites, and search results.
+- Sort favorite meals by highest-rated or lowest-rated.
+- If a meal has no ratings, display “No ratings yet.”
+
+4. Shared Ratings and Data Storage
+- Ratings must be visible to other users of the app, so do not store community ratings only in localStorage.
+- If a backend is not currently available, create a clear data-service abstraction with sample shared rating data and explain where a real backend should be connected.
+- If the project already uses a backend or database, store ratings with:
+  - Recipe ID
+  - User ID or anonymous user identifier
+  - Rating value from 0 to 5
+  - Date submitted
+- Prevent one user from creating duplicate ratings for the same recipe.
+- Update the average rating immediately after a rating is submitted or changed.
+- Keep favorites and personal settings in localStorage if appropriate, but treat community ratings as shared database data.
+
+5. Technical Requirements
+- Inspect the existing project before making changes.
+- Reuse the current components, styling, and data structures whenever possible.
+- Create reusable components for:
+  - Shopping-list view toggle
+  - Daily grocery-list sections
+  - Difficulty filter
+  - Star-rating control
+  - Rating summary
+- Make sure changing a meal, regenerating a meal, or deleting a meal updates the shopping list and ratings correctly.
+- Make the new features responsive on desktop, tablet, and mobile screens.
+- Add loading, error, and empty states.
+- Test all buttons, filters, rating controls, localStorage behavior, and responsive layouts.
+- Do not replace working features or create nonfunctional placeholder buttons.
