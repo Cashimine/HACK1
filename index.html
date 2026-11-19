@@ -81,7 +81,7 @@
     .meal-card { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 15px 15px 13px; min-width: 0; transition: .15s ease; }
     .meal-card:hover { border-color: #cbd9cc; box-shadow: var(--shadow); }
     .meal-type { color: var(--green); text-transform: uppercase; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
-    .meal-title { border: 0; background: transparent; padding: 0; display: block; color: var(--ink); text-align: left; font-family: Georgia, serif; font-size: 18px; letter-spacing: -.25px; line-height: 1.2; margin: 8px 35px 7px 0; }
+    .meal-title { border: 0; background: transparent; padding: 0; display: block; color: var(--ink); text-align: left; font-family: Georgia, serif; font-size: 18px; letter-spacing: -.25px; line-height: 1.2; margin: 8px 92px 7px 0; }
     .meal-title:hover { color: var(--green); }
     .meal-description { color: var(--muted); font-size: 11px; line-height: 1.45; min-height: 30px; margin: 0 0 12px; }
     .meal-meta { border-top: 1px solid #efefe9; padding-top: 10px; display: flex; gap: 13px; color: #738078; font-size: 10px; }
@@ -95,18 +95,36 @@
     .section-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
     .section-card + .section-card { margin-top: 16px; }
     .section-title { font-family: Georgia, serif; font-size: 21px; font-weight: 500; margin: 0; }
-    .section-card-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 17px; }
+    .section-card-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 17px; }
     .recipes-toolbar { display: flex; gap: 10px; margin-bottom: 17px; flex-wrap: wrap; }
     .field { width: 100%; border: 1px solid #dfe4dc; background: #fff; border-radius: 9px; padding: 10px 11px; color: var(--ink); }
     .search-field { max-width: 340px; }
     .recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
     .recipe-tile { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 17px; min-height: 155px; }
     .recipe-tile .tile-icon { font-size: 24px; }
+    .recipe-tile .meal-title { margin-right: 35px; }
     .recipe-tile h3 { font-family: Georgia, serif; font-size: 17px; margin: 12px 30px 6px 0; line-height: 1.2; }
     .recipe-tile p { font-size: 11px; color: var(--muted); margin: 0 0 12px; }
     .recipe-tags { display: flex; gap: 5px; flex-wrap: wrap; }
     .tag { border-radius: 20px; padding: 4px 7px; background: #edf2eb; color: var(--green); font-size: 9px; font-weight: 650; }
+    .tag-difficulty { background: #f7f0e8; color: #825b3f; }
+    .rating-summary { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; color: #6d786f; font-size: 10px; }
+    .rating-stars { color: #d78a42; letter-spacing: 1px; white-space: nowrap; font-size: 12px; }
+    .personal-rating { color: var(--green); font-weight: 650; }
+    .rating-control { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 12px 0; }
+    .rating-control-label { color: #68756c; font-size: 11px; font-weight: 650; margin-right: 4px; }
+    .rating-choice { border: 0; background: transparent; padding: 4px; color: #d78a42; font-size: 21px; line-height: 1; border-radius: 6px; }
+    .rating-choice:hover, .rating-choice[aria-pressed="true"] { background: #fbefe4; }
+    .rating-zero { border: 1px solid var(--line); background: white; border-radius: 7px; color: #68756c; padding: 5px 8px; font-size: 10px; }
+    .rating-note { color: var(--muted); font-size: 10px; line-height: 1.45; }
     .grocery-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: start; }
+    .shopping-toggle { display: inline-flex; gap: 3px; padding: 3px; background: #f1f3ee; border-radius: 9px; }
+    .shopping-toggle button { border: 0; background: transparent; color: #6a776e; border-radius: 7px; padding: 7px 9px; font-size: 10px; font-weight: 650; }
+    .shopping-toggle button[aria-pressed="true"] { background: white; color: var(--green-dark); box-shadow: 0 1px 3px rgba(37,55,46,.1); }
+    .daily-grocery-day { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+    .daily-grocery-day:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+    .daily-grocery-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 0 8px; font-size: 13px; }
+    .daily-grocery-heading span { color: var(--muted); font-size: 10px; font-weight: 450; }
     .grocery-group { border-top: 1px solid var(--line); padding-top: 15px; margin-top: 15px; }
     .grocery-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
     .grocery-group h3 { font-size: 12px; margin: 0 0 8px; color: #68756c; }
@@ -115,6 +133,7 @@
     .grocery-row input[type=checkbox] { accent-color: var(--green); width: 15px; height: 15px; }
     .grocery-name { flex: 1; font-size: 12px; }
     .grocery-qty { color: #818a82; font-size: 11px; }
+    .grocery-meal { color: #89938b; font-size: 10px; max-width: 190px; text-align: right; }
     .grocery-row.checked .grocery-name { text-decoration: line-through; color: #9ca39c; }
     .grocery-row .icon-button { visibility: hidden; }
     .grocery-row:hover .icon-button, .grocery-row:focus-within .icon-button { visibility: visible; }
@@ -210,6 +229,8 @@
       .recipe-columns { grid-template-columns: 1fr; gap: 8px; }
       .modal { padding: 20px 17px; }
       .recipe-stats { flex-wrap: wrap; row-gap: 12px; }
+      .shopping-toggle button { padding: 7px 6px; font-size: 9px; }
+      .grocery-meal { max-width: 100px; }
       .recipe-stat { min-width: 25%; }
       .add-grocery { grid-template-columns: 1fr 75px auto; gap: 5px; }
       .add-grocery .btn { padding: 8px; }
@@ -307,8 +328,12 @@
       let checkedItems = readStore("checked", []);
       let customItems = readStore("custom", []);
       let removedItems = readStore("removed", []);
+      let shoppingView = readStore("shopping-view", "combined");
+      let userRatings = readStore("user-ratings", {});
+      const ratingUserId = readStore("rating-user-id",`local-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`);
+      const ratingStatus = {};
       let activeRecipeId = null, modalServings = 2, toastTimer, currentPage = "plan";
-      const persist = () => {
+      const persist = (notifyError=true) => {
         try {
           localStorage.setItem("homemade-preferences", JSON.stringify(preferences));
           localStorage.setItem("homemade-plan", JSON.stringify(plan));
@@ -316,7 +341,11 @@
           localStorage.setItem("homemade-checked", JSON.stringify(checkedItems));
           localStorage.setItem("homemade-custom", JSON.stringify(customItems));
           localStorage.setItem("homemade-removed", JSON.stringify(removedItems));
-        } catch (e) { console.error("Could not save Homemade data", e); toast("Couldn't save changes on this device."); }
+          localStorage.setItem("homemade-shopping-view", JSON.stringify(shoppingView));
+          localStorage.setItem("homemade-rating-user-id", JSON.stringify(ratingUserId));
+          localStorage.setItem("homemade-user-ratings", JSON.stringify(userRatings));
+          return true;
+        } catch (e) { console.error("Could not save Homemade data", e); if(notifyError) toast("Couldn't save changes on this device."); return false; }
       };
       const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
       const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
@@ -325,6 +354,46 @@
       const iso = d => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`; };
       const getRecipe = id => recipes.find(r => r.id === id);
       const byId = Object.fromEntries(recipes.map(r => [r.id, r]));
+      // Replace this adapter with a shared upsert of {recipeId,userId,rating,submittedAt}; the unique key prevents duplicate users per recipe.
+      // Until then, these fixed sample community aggregates are shared demo data; personal votes stay on this device.
+      const sampleCommunityRatings = Object.fromEntries(recipes.map((recipe,index) => {
+        const count=index%7===0?0:8+(index*13)%43;
+        const average=Math.round((3.7+(index*7%13)/10)*10)/10;
+        return [recipe.id,{sum:average*count,count}];
+      }));
+      const ratingsService = {
+        getSummary(recipeId) {
+          const sample=sampleCommunityRatings[recipeId]||{sum:0,count:0};
+          const userRecord=userRatings[recipeId];
+          const userValue=typeof userRecord==="number"?userRecord:userRecord?.rating;
+          const hasUserRating=Object.prototype.hasOwnProperty.call(userRatings,recipeId)&&Number.isInteger(userValue);
+          const count=sample.count+(hasUserRating?1:0);
+          return {
+            average:count?(sample.sum+(hasUserRating?userValue:0))/count:0,
+            count,
+            userRating:hasUserRating?userValue:null
+          };
+        },
+        async submitRating(recipeId,value) {
+          if(!getRecipe(recipeId)) throw new Error("Recipe does not exist.");
+          if(!Number.isInteger(value)||value<0||value>5) throw new Error("Rating must be a whole number from 0 to 5.");
+          const previous=userRatings;
+          userRatings={...userRatings,[recipeId]:{userId:ratingUserId,rating:value,submittedAt:new Date().toISOString()}};
+          if(!persist(false)){userRatings=previous;throw new Error("Couldn't save your rating on this device.");}
+          return this.getSummary(recipeId);
+        }
+      };
+      function ratingSummary(recipeId) {
+        const summary=ratingsService.getSummary(recipeId);
+        if(!summary.count) return `<div class="rating-summary"><span class="rating-stars" aria-hidden="true">☆☆☆☆☆</span><span>No ratings yet</span>${summary.userRating!==null?`<span class="personal-rating">You: ${summary.userRating}/5</span>`:""}</div>`;
+        const stars=Math.round(summary.average);
+        const personal=summary.userRating===null?"":`<span class="personal-rating">You: ${summary.userRating}/5</span>`;
+        return `<div class="rating-summary"><span class="rating-stars" aria-hidden="true">${"★".repeat(stars)}${"☆".repeat(5-stars)}</span><span aria-label="Community average ${summary.average.toFixed(1)} out of 5 from ${summary.count} ${summary.count===1?"rating":"ratings"}">${summary.average.toFixed(1)} · ${summary.count} ${summary.count===1?"rating":"ratings"}</span>${personal}</div>`;
+      }
+      function starRatingControl(recipeId) {
+        const current=userRatings[recipeId], saving=Boolean(ratingStatus[recipeId]);
+        return `<div class="rating-control" role="group" aria-label="Rate ${escapeHtml(getRecipe(recipeId)?.name||"recipe")}"><span class="rating-control-label">Your rating</span><button class="rating-zero" data-action="rate" data-id="${recipeId}" data-rating="0" aria-label="Rate ${escapeHtml(getRecipe(recipeId)?.name||"recipe")} 0 stars" aria-pressed="${current===0}" ${saving?"disabled":""}>0</button>${[1,2,3,4,5].map(n=>`<button class="rating-choice" data-action="rate" data-id="${recipeId}" data-rating="${n}" aria-label="Rate ${escapeHtml(getRecipe(recipeId)?.name||"recipe")} ${n} ${n===1?"star":"stars"}" aria-pressed="${current===n}" ${saving?"disabled":""}>${current!==undefined&&current>=n?"★":"☆"}</button>`).join("")}${saving?`<span class="rating-note" role="status">Saving…</span>`:""}</div>`;
+      }
       function toast(message) {
         const el = document.getElementById("toast"); el.textContent = message; el.classList.add("show");
         clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
@@ -364,8 +433,8 @@
             <div class="day-meals">${day.meals.map((entry,j)=>{
               const r=getRecipe(entry.recipeId); if(!r) return "";
               const servings=entry.servings||preferences.people;
-              return `<article class="meal-card"><div class="meal-type">${escapeHtml(r.type)} · ${servings} servings</div><div class="card-tools"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><button class="icon-button" data-action="regenerate" data-day="${i}" data-meal="${j}" aria-label="Replace ${escapeHtml(r.name)}">↻</button></div><button class="meal-title" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p class="meal-description">${escapeHtml(r.description)}</p><div class="meal-meta"><span>◷ ${r.prep+r.cook} min</span><span>⚡ ${r.calories} cal</span><span>${r.difficulty}</span></div></article>`;
-            }).join("")}${day.meals.length<expectedMeals?`<div class="meal-empty">Some meals couldn't be matched to these preferences. Adjust settings for more options.</div>`:""}</div>`;
+              return `<article class="meal-card"><div class="meal-type">${escapeHtml(r.type)} · ${servings} servings</div><div class="card-tools"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><button class="icon-button" data-action="regenerate" data-day="${i}" data-meal="${j}" aria-label="Replace ${escapeHtml(r.name)}">↻</button><button class="icon-button" data-action="delete-meal" data-day="${i}" data-meal="${j}" aria-label="Remove ${escapeHtml(r.name)} from plan">×</button></div><button class="meal-title" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p class="meal-description">${escapeHtml(r.description)}</p>${ratingSummary(r.id)}<div class="meal-meta"><span>◷ ${r.prep+r.cook} min</span><span>⚡ ${r.calories} cal</span><span>${r.difficulty}</span></div></article>`;
+            }).join("")}${day.meals.length<expectedMeals?`<div class="meal-empty">Some meal slots are empty. Adjust preferences or replace the day to add more meals.</div>`:""}</div>`;
         }).join("");
         const days = new Set(plan.map(d=>d.date));
         const estimatedTotal = groceryItems().reduce((s,x)=>s+x.price,0);
@@ -426,6 +495,27 @@
         const used=new Set([...plan.filter((_,i)=>i!==index).flatMap(x=>x.meals.map(m=>m.recipeId)),...old.meals.map(m=>m.recipeId)]);
         plan[index]=createDay(d,used); persist(); renderPlan(); toast("Day refreshed with new meal ideas.");
       }
+      function removeMeal(dayIndex,mealIndex) {
+        const day=plan[dayIndex]; if(!day?.meals[mealIndex]) return;
+        const [removed]=day.meals.splice(mealIndex,1);
+        persist(); renderPlan(); renderNav();
+        toast(`${getRecipe(removed.recipeId)?.name||"Meal"} removed. Your grocery list is updated.`);
+      }
+      async function submitUserRating(recipeId,value) {
+        ratingStatus[recipeId]=true;
+        if(activeRecipeId===recipeId) renderRecipeModal();
+        try {
+          await ratingsService.submitRating(recipeId,value);
+          toast("Your rating was saved on this device.");
+        } catch(error) {
+          console.error("Could not save recipe rating",error);
+          toast(error.message||"Couldn't save your rating. Please try again.");
+        } finally {
+          delete ratingStatus[recipeId];
+          if(activeRecipeId===recipeId) renderRecipeModal();
+          refreshPage();
+        }
+      }
       function toggleFavorite(id) {
         favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
         persist(); refreshPage(); if(activeRecipeId===id) renderRecipeModal();
@@ -445,11 +535,24 @@
         target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">A collection worth coming back to</div><h1 id="recipes-heading">Recipe box</h1><p class="subtitle">Simple, satisfying food for your everyday.</p></div></div><div class="recipes-toolbar"><input class="field search-field" id="recipe-search" placeholder="Search recipes or ingredients…" aria-label="Search recipes" value="${escapeHtml(query)}"><select class="field" id="recipe-filter" aria-label="Filter by meal type" style="max-width:180px"><option ${filter==="All meals"?"selected":""}>All meals</option>${["Breakfast","Lunch","Dinner","Snack"].map(t=>`<option ${filter===t?"selected":""}>${t}</option>`).join("")}</select></div>${list.length?`<div class="recipe-grid">${list.map(recipeTile).join("")}</div>`:`<div class="section-card empty-state"><div class="empty-emoji">🔎</div><h2>No recipes found</h2><p>Try another search or meal type.</p></div>`}`;
       }
       function recipeTile(r) {
-        return `<article class="recipe-tile"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" style="position:absolute;right:11px;top:11px" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><div class="tile-icon">${r.emoji}</div><button class="meal-title" style="font-size:17px;margin-top:8px" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p>${r.type} · ${r.prep+r.cook} min · ${r.calories} cal</p><div class="recipe-tags">${r.tags.slice(0,3).map(t=>`<span class="tag">${titleCase(t.replace("-"," "))}</span>`).join("")}</div></article>`;
+        return `<article class="recipe-tile"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" style="position:absolute;right:11px;top:11px" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><div class="tile-icon">${r.emoji}</div><button class="meal-title" style="font-size:17px;margin-top:8px" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p>${r.type} · ${r.prep+r.cook} min · ${r.calories} cal</p><div class="recipe-tags"><span class="tag tag-difficulty">${r.difficulty}</span>${r.tags.slice(0,2).map(t=>`<span class="tag">${titleCase(t.replace("-"," "))}</span>`).join("")}</div>${ratingSummary(r.id)}</article>`;
+      }
+      function favoriteFilters(difficulty,sort) {
+        return `<div class="recipes-toolbar"><select class="field" id="favorite-difficulty" aria-label="Filter favorites by difficulty"><option ${difficulty==="All difficulties"?"selected":""}>All difficulties</option>${["Easy","Medium","Hard"].map(x=>`<option ${difficulty===x?"selected":""}>${x}</option>`).join("")}</select><select class="field" id="favorite-sort" aria-label="Sort favorites"><option ${sort==="Recommended"?"selected":""}>Recommended</option><option ${sort==="Name A–Z"?"selected":""}>Name A–Z</option><option ${sort==="Prep time"?"selected":""}>Prep time</option><option ${sort==="Highest rated"?"selected":""}>Highest rated</option><option ${sort==="Lowest rated"?"selected":""}>Lowest rated</option></select></div>`;
       }
       function renderFavorites() {
-        const target=document.getElementById("page-favorites"), list=recipes.filter(r=>favorites.includes(r.id));
-        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Keep the good ones close</div><h1 id="favorites-heading">Your favorites</h1><p class="subtitle">All the recipes you've saved in one cozy spot.</p></div></div>${list.length?`<div class="recipe-grid">${list.map(recipeTile).join("")}</div>`:`<div class="section-card empty-state"><div class="empty-emoji">♡</div><h2>A place for your go-tos</h2><p>Tap the heart on any recipe to save it here.</p><button class="btn btn-primary" data-nav="recipes">Explore recipes</button></div>`}`;
+        const target=document.getElementById("page-favorites");
+        const difficulty=document.getElementById("favorite-difficulty")?.value||"All difficulties";
+        const sort=document.getElementById("favorite-sort")?.value||"Recommended";
+        const all=recipes.filter(r=>favorites.includes(r.id));
+        const list=all.filter(r=>difficulty==="All difficulties"||r.difficulty===difficulty);
+        if(sort==="Name A–Z") list.sort((a,b)=>a.name.localeCompare(b.name));
+        if(sort==="Prep time") list.sort((a,b)=>a.prep-b.prep||a.name.localeCompare(b.name));
+        if(sort==="Highest rated") list.sort((a,b)=>ratingsService.getSummary(b.id).average-ratingsService.getSummary(a.id).average);
+        if(sort==="Lowest rated") list.sort((a,b)=>ratingsService.getSummary(a.id).average-ratingsService.getSummary(b.id).average);
+        const controls=favoriteFilters(difficulty,sort);
+        const body=!all.length?`<div class="section-card empty-state"><div class="empty-emoji">♡</div><h2>A place for your go-tos</h2><p>Tap the heart on any recipe to save it here.</p><button class="btn btn-primary" data-nav="recipes">Explore recipes</button></div>`:list.length?`<div class="recipe-grid">${list.map(recipeTile).join("")}</div>`:`<div class="section-card empty-state"><div class="empty-emoji">🔎</div><h2>No ${escapeHtml(difficulty.toLowerCase())} favorites yet</h2><p>Choose another difficulty or save a recipe at this level.</p></div>`;
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Keep the good ones close</div><h1 id="favorites-heading">Your favorites</h1><p class="subtitle">Saved recipes, with difficulty and ratings at a glance.</p></div></div>${all.length?controls:""}${body}`;
       }
       function formatQty(amount) {
         if(!Number.isFinite(amount)) return String(amount);
@@ -463,7 +566,7 @@
         const r=getRecipe(activeRecipeId); if(!r) return;
         const factor=modalServings/(Number(r.servings)||2);
         const stats=[["Prep",`${r.prep} min`],["Cook",`${r.cook} min`],["Total",`${r.prep+r.cook} min`],["Level",r.difficulty]];
-        document.getElementById("modal-content").innerHTML=`<button class="modal-close" data-action="close-modal" aria-label="Close recipe">×</button><div class="eyebrow">${r.emoji} &nbsp;${r.type}</div><h2 id="recipe-modal-title">${escapeHtml(r.name)}</h2><div class="recipe-lede">${escapeHtml(r.description)}</div><div class="recipe-stats">${stats.map(s=>`<div class="recipe-stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join("")}</div><div class="serving-control"><b>Servings</b><button data-action="serving" data-delta="-1" aria-label="Decrease servings">−</button><span>${modalServings}</span><button data-action="serving" data-delta="1" aria-label="Increase servings">+</button></div><div class="recipe-columns"><div><h3>Ingredients</h3><ul class="ingredient-list">${r.ingredients.map(([name,qty,unit])=>`<li><b>${formatQty(qty*factor)} ${unit}</b> ${escapeHtml(name)}</li>`).join("")}</ul><div class="nutrition"><b>Per serving</b><br>${r.calories} calories · ${r.protein}g protein · ${r.carbs}g carbs · ${r.fat}g fat</div></div><div><h3>Let's make it</h3><ol class="instruction-list">${r.instructions.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ol></div></div><div class="modal-actions"><button class="btn" data-action="favorite" data-id="${r.id}">${favorites.includes(r.id)?"♥ Saved to favorites":"♡ Add to favorites"}</button><button class="btn btn-primary" data-action="close-modal">Done</button></div>`;
+        document.getElementById("modal-content").innerHTML=`<button class="modal-close" data-action="close-modal" aria-label="Close recipe">×</button><div class="eyebrow">${r.emoji} &nbsp;${r.type}</div><h2 id="recipe-modal-title">${escapeHtml(r.name)}</h2><div class="recipe-lede">${escapeHtml(r.description)}</div><div class="recipe-stats">${stats.map(s=>`<div class="recipe-stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join("")}</div><div class="section-card-header" style="margin:15px 0 0"><h3 class="section-title" style="font-size:17px">Ratings</h3></div>${ratingSummary(r.id)}${starRatingControl(r.id)}<div class="rating-note">Community numbers are sample data in this offline version. Your rating is saved on this device; connect the ratings service to a shared backend for live community updates.</div><div class="serving-control"><b>Servings</b><button data-action="serving" data-delta="-1" aria-label="Decrease servings">−</button><span>${modalServings}</span><button data-action="serving" data-delta="1" aria-label="Increase servings">+</button></div><div class="recipe-columns"><div><h3>Ingredients</h3><ul class="ingredient-list">${r.ingredients.map(([name,qty,unit])=>`<li><b>${formatQty(qty*factor)} ${unit}</b> ${escapeHtml(name)}</li>`).join("")}</ul><div class="nutrition"><b>Per serving</b><br>${r.calories} calories · ${r.protein}g protein · ${r.carbs}g carbs · ${r.fat}g fat</div></div><div><h3>Let's make it</h3><ol class="instruction-list">${r.instructions.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ol></div></div><div class="modal-actions"><button class="btn" data-action="favorite" data-id="${r.id}">${favorites.includes(r.id)?"♥ Saved to favorites":"♡ Add to favorites"}</button><button class="btn btn-primary" data-action="close-modal">Done</button></div>`;
       }
       function openRecipe(id) {
         activeRecipeId=id; modalServings=Number(plan.flatMap(d=>d.meals).find(m=>m.recipeId===id)?.servings)||Number(preferences.people)||2;
@@ -489,6 +592,35 @@
           combined.set(key,{id:key,name:item.name,qty:Number(item.qty)||1,unit:item.unit||"each",category:item.category||"Other",price:0,customId:item.id});
         }
         return [...combined.values()].filter(item=>!removedItems.includes(item.id)).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name));
+      }
+      function groceryItemsForDay(day) {
+        const combined=new Map();
+        const pantry=preferences.pantry.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+        for(const entry of day.meals) {
+          const recipe=getRecipe(entry.recipeId); if(!recipe) continue;
+          const factor=(Number(entry.servings)||2)/(Number(recipe.servings)||2);
+          for(const [name,qty,unit,category] of recipe.ingredients) {
+            if(pantry.some(have=>name.toLowerCase().includes(have)||have.includes(name.toLowerCase()))) continue;
+            const measure=normalizeMeasure(qty*factor,unit);
+            const key=`${name.toLowerCase()}|${measure.unit}`;
+            if(combined.has(key)) {
+              const item=combined.get(key); item.qty+=measure.qty;
+              if(!item.meals.includes(recipe.name)) item.meals.push(recipe.name);
+            } else combined.set(key,{id:key,name,qty:measure.qty,unit:measure.unit,category:category||"Other",meals:[recipe.name]});
+          }
+        }
+        return [...combined.values()].filter(item=>!removedItems.includes(item.id)).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name));
+      }
+      function shoppingViewToggle() {
+        return `<div class="shopping-toggle" role="group" aria-label="Shopping list organization"><button data-action="shopping-view" data-view="combined" aria-pressed="${shoppingView==="combined"}">Combined weekly list</button><button data-action="shopping-view" data-view="daily" aria-pressed="${shoppingView==="daily"}">Separated by day</button></div>`;
+      }
+      function dailyGrocerySections() {
+        const sections=plan.map(day=>{
+          const date=new Date(day.date+"T12:00:00"), items=groceryItemsForDay(day);
+          return `<section class="daily-grocery-day"><h3 class="daily-grocery-heading">${new Intl.DateTimeFormat("en-US",{weekday:"long"}).format(date)} <span>${shortDate(date)}</span></h3>${items.length?items.map(item=>renderGroceryItem(item)).join(""):`<p class="rating-note">No ingredients to shop for this day.</p>`}</section>`;
+        }).join("");
+        const added=customItems.map(item=>({id:"custom-"+item.id,customId:item.id,name:item.name,qty:Number(item.qty)||1,unit:item.unit||"each",category:item.category||"Other"})).filter(item=>!removedItems.includes(item.id));
+        return `${sections}${added.length?`<section class="daily-grocery-day"><h3 class="daily-grocery-heading">Added manually <span>Not assigned to a day</span></h3>${added.map(item=>renderGroceryItem(item)).join("")}</section>`:""}`;
       }
       function normalizeMeasure(qty,unit) {
         const u=unit.toLowerCase().trim();
@@ -532,12 +664,14 @@
         const groups=categories.map(cat=>({cat,items:items.filter(i=>i.category===cat)})).filter(g=>g.items.length);
         const total=items.reduce((s,x)=>s+x.price,0), budget=Number(preferences.budget)||0, percent=budget?Math.min(100,total/budget*100):0;
         const budgetStatus=total<=budget?`$${(budget-total).toFixed(0)} under your $${budget} budget`:`$${(total-budget).toFixed(0)} over your $${budget} budget`;
-        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Everything for a delicious week</div><h1 id="groceries-heading">Grocery list</h1><p class="subtitle">${items.length} ingredients, combined from your meal plan.${preferences.pantry?` Pantry items excluded: ${escapeHtml(preferences.pantry)}.`:""}</p></div><div class="actions"><button class="btn" data-action="download">↓ Download</button><button class="btn btn-primary" data-action="print">⎙ Print list</button></div></div><div class="grocery-layout"><div class="section-card"><div class="section-card-header"><h2 class="section-title">Shopping list</h2><button class="btn btn-small btn-quiet" data-action="clear-checked">Clear completed</button></div>${groups.length?groups.map(g=>`<div class="grocery-group"><h3>${g.cat} <span style="font-weight:400;color:#969e96">· ${g.items.length}</span></h3>${g.items.map(item=>renderGroceryItem(item)).join("")}</div>`).join(""):`<div class="empty-state"><div class="empty-emoji">🧺</div><h2>Your list is empty</h2><p>Generate a meal plan to fill your basket.</p></div>`}<form class="add-grocery" id="add-grocery-form"><input class="field" name="name" placeholder="Add an item…" aria-label="New grocery item" required maxlength="70"><input class="field" name="qty" type="number" min=".1" step=".1" value="1" aria-label="Quantity"><button class="btn btn-primary" type="submit" aria-label="Add grocery item">＋ Add</button></form></div><aside class="budget-card"><div class="label">Estimated weekly basket</div><div class="budget-value">$${total.toFixed(0)}</div><div class="budget-note">Approximate cost for your planned ingredients. Prices vary by store and location.</div><div class="progress" role="progressbar" aria-valuenow="${Math.round(percent)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${percent}%"></span></div><div class="budget-note">${budgetStatus}</div><div class="list-actions"><button class="btn btn-small" data-action="download">↓ Download .txt</button><button class="btn btn-small" data-action="print">⎙ Print</button></div></aside></div>`;
+        const listContent=shoppingView==="daily"?dailyGrocerySections():groups.map(g=>`<div class="grocery-group"><h3>${g.cat} <span style="font-weight:400;color:#969e96">· ${g.items.length}</span></h3>${g.items.map(item=>renderGroceryItem(item)).join("")}</div>`).join("");
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Everything for a delicious week</div><h1 id="groceries-heading">Grocery list</h1><p class="subtitle">${items.length} unique ingredients this week.${preferences.pantry?` Pantry items excluded: ${escapeHtml(preferences.pantry)}.`:""}</p></div><div class="actions"><button class="btn" data-action="download">↓ Download</button><button class="btn btn-primary" data-action="print">⎙ Print list</button></div></div><div class="grocery-layout"><div class="section-card"><div class="section-card-header"><h2 class="section-title">Shopping list</h2>${shoppingViewToggle()}<button class="btn btn-small btn-quiet" data-action="clear-checked">Clear completed</button></div>${listContent||`<div class="empty-state"><div class="empty-emoji">🧺</div><h2>Your list is empty</h2><p>Generate a meal plan or add an item to fill your basket.</p></div>`}<form class="add-grocery" id="add-grocery-form"><input class="field" name="name" placeholder="Add an item…" aria-label="New grocery item" required maxlength="70"><input class="field" name="qty" type="number" min=".1" step=".1" value="1" aria-label="Quantity"><button class="btn btn-primary" type="submit" aria-label="Add grocery item">＋ Add</button></form></div><aside class="budget-card"><div class="label">Estimated weekly basket</div><div class="budget-value">$${total.toFixed(0)}</div><div class="budget-note">Approximate cost for your planned ingredients. Prices vary by store and location.</div><div class="progress" role="progressbar" aria-valuenow="${Math.round(percent)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${percent}%"></span></div><div class="budget-note">${budgetStatus}</div><div class="list-actions"><button class="btn btn-small" data-action="download">↓ Download .txt</button><button class="btn btn-small" data-action="print">⎙ Print</button></div></aside></div>`;
       }
       function renderGroceryItem(item) {
         const checked=checkedItems.includes(item.id);
-        if(item.customId)         return `<div class="grocery-row ${checked?"checked":""}" data-item="${escapeHtml(item.id)}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span><span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span><button class="icon-button" data-action="edit-item" data-id="${escapeHtml(item.customId)}" aria-label="Edit ${escapeHtml(item.name)}">✎</button><button class="icon-button" data-action="delete-item" data-id="${escapeHtml(item.customId)}" aria-label="Delete ${escapeHtml(item.name)}">×</button></div>`;
-        return `<div class="grocery-row ${checked?"checked":""}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span><span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span></div>`;
+        const mealLabel=item.meals?.length?`<span class="grocery-meal">${escapeHtml(item.meals.join(", "))}</span>`:"";
+        if(item.customId) return `<div class="grocery-row ${checked?"checked":""}" data-item="${escapeHtml(item.id)}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span>${mealLabel}<span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span><button class="icon-button" data-action="edit-item" data-id="${escapeHtml(item.customId)}" aria-label="Edit ${escapeHtml(item.name)}">✎</button><button class="icon-button" data-action="delete-item" data-id="${escapeHtml(item.customId)}" aria-label="Delete ${escapeHtml(item.name)}">×</button></div>`;
+        return `<div class="grocery-row ${checked?"checked":""}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span>${mealLabel}<span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span></div>`;
       }
       function renderSettings() {
         const target=document.getElementById("page-settings");
@@ -557,7 +691,19 @@
       }
       function downloadList() {
         const items=groceryItems(), categories=[...new Set(items.map(i=>i.category))];
-        const text=["HOMEMADE — WEEKLY GROCERY LIST","",...categories.flatMap(cat=>[cat,...items.filter(x=>x.category===cat).map(x=>`[${checkedItems.includes(x.id)?"x":" "}] ${groceryQuantity(x)} ${x.name}`), ""]),`Estimated total: $${items.reduce((s,x)=>s+x.price,0).toFixed(2)}`].join("\n");
+        const lines=["HOMEMADE — WEEKLY GROCERY LIST",""];
+        if(shoppingView==="daily") {
+          for(const day of plan) {
+            const date=new Date(day.date+"T12:00:00");
+            lines.push(`${new Intl.DateTimeFormat("en-US",{weekday:"long"}).format(date)} — ${shortDate(date)}`);
+            for(const item of groceryItemsForDay(day)) lines.push(`[${checkedItems.includes(item.id)?"x":" "}] ${groceryQuantity(item)} ${item.name} — ${item.meals.join(", ")}`);
+            lines.push("");
+          }
+          const added=items.filter(item=>item.customId);
+          if(added.length){lines.push("Added manually");for(const item of added)lines.push(`[${checkedItems.includes(item.id)?"x":" "}] ${groceryQuantity(item)} ${item.name}`);lines.push("");}
+        } else lines.push(...categories.flatMap(cat=>[cat,...items.filter(x=>x.category===cat).map(x=>`[${checkedItems.includes(x.id)?"x":" "}] ${groceryQuantity(x)} ${x.name}`), ""]));
+        lines.push(`Estimated total: $${items.reduce((s,x)=>s+x.price,0).toFixed(2)}`);
+        const text=lines.join("\n");
         const link=document.createElement("a"); link.href=URL.createObjectURL(new Blob([text],{type:"text/plain"})); link.download="homemade-grocery-list.txt"; link.click(); URL.revokeObjectURL(link.href); toast("Grocery list downloaded.");
       }
       document.addEventListener("click", e=>{
@@ -568,10 +714,17 @@
         if(action==="go-settings") setPage("settings");
         if(action==="replace-day") replaceDay(Number(btn.dataset.day));
         if(action==="regenerate") replaceMeal(Number(btn.dataset.day),Number(btn.dataset.meal));
+        if(action==="delete-meal") removeMeal(Number(btn.dataset.day),Number(btn.dataset.meal));
         if(action==="favorite") toggleFavorite(id);
         if(action==="recipe") openRecipe(id);
+        if(action==="rate") submitUserRating(id,Number(btn.dataset.rating));
         if(action==="close-modal") closeModal();
         if(action==="serving"){modalServings=Math.max(1,Math.min(12,modalServings+Number(btn.dataset.delta)));renderRecipeModal();}
+        if(action==="shopping-view") {
+          if(btn.dataset.view==="combined"||btn.dataset.view==="daily") {
+            shoppingView=btn.dataset.view; persist(); renderGroceries();
+          }
+        }
         if(action==="check-item"){const key=id;checkedItems=checkedItems.includes(key)?checkedItems.filter(x=>x!==key):[...checkedItems,key];persist();renderGroceries();}
         if(action==="clear-checked"){removedItems=[...new Set([...removedItems,...checkedItems])];checkedItems=[];persist();renderGroceries();renderNav();toast("Completed items cleared from your list.");}
         if(action==="download") downloadList();
@@ -592,7 +745,10 @@
         if(e.target.matches("[data-edit-id]")){e.preventDefault();const id=e.target.dataset.editId,fd=new FormData(e.target),item=customItems.find(x=>x.id===id);if(item){item.name=String(fd.get("name")).trim();item.qty=Number(fd.get("qty"))||1;persist();renderGroceries();toast("Grocery item updated.");}}
       });
       document.addEventListener("input",e=>{if(e.target.id==="recipe-search"){const pos=e.target.selectionStart;renderRecipes();const input=document.getElementById("recipe-search");input.focus();input.setSelectionRange(pos,pos);}});
-      document.addEventListener("change",e=>{if(e.target.id==="recipe-filter")renderRecipes();});
+      document.addEventListener("change",e=>{
+        if(e.target.id==="recipe-filter")renderRecipes();
+        if(e.target.id==="favorite-difficulty"||e.target.id==="favorite-sort")renderFavorites();
+      });
       document.getElementById("recipe-modal").addEventListener("click",e=>{if(e.target.id==="recipe-modal")closeModal();});
       document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
       document.getElementById("top-date").textContent=new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric"}).format(new Date());
