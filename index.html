@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f1">
+  <title>Homemade — meal planning, made easy</title>
+  <style>
+    :root {
+      --paper: #f7f6f1;
+      --white: #fffefa;
+      --ink: #25372e;
+      --muted: #788078;
+      --green: #37684f;
+      --green-dark: #294d3a;
+      --sage: #e7eee6;
+      --line: #e8e8df;
+      --orange: #e89961;
+      --orange-light: #fbefe4;
+      --shadow: 0 8px 30px rgba(37, 55, 46, .06);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid #e6a06b; outline-offset: 2px; }
+    .app-shell { display: grid; grid-template-columns: 242px minmax(0, 1fr); min-height: 100vh; max-width: 1800px; margin: auto; }
+    .sidebar { background: #fffefa; border-right: 1px solid var(--line); padding: 27px 18px 22px; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; height: 100vh; }
+    .brand { display: flex; gap: 11px; align-items: center; padding: 0 12px 30px; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: var(--green); color: white; font-size: 20px; }
+    .brand-name { font-family: Georgia, serif; font-size: 22px; letter-spacing: -.5px; font-weight: 700; }
+    .brand-tag { color: var(--muted); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; margin-top: 2px; }
+    .nav-label { color: #a0a49e; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 9px 13px 10px; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-link { border: 0; background: transparent; color: #647168; display: flex; align-items: center; gap: 13px; padding: 12px 13px; border-radius: 11px; font-weight: 550; text-align: left; width: 100%; transition: .18s ease; }
+    .nav-link:hover { background: #f5f6f1; color: var(--ink); }
+    .nav-link.active { background: var(--sage); color: var(--green-dark); font-weight: 700; }
+    .nav-icon { width: 19px; text-align: center; font-size: 17px; }
+    .nav-count { margin-left: auto; color: var(--muted); font-size: 11px; }
+    .sidebar-spacer { flex: 1; }
+    .weekly-note { margin: 20px 4px 16px; padding: 17px; background: #f6f2e9; border-radius: 14px; }
+    .weekly-note .note-kicker { color: #8d7556; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .weekly-note p { font-family: Georgia, serif; font-size: 17px; line-height: 1.35; margin: 8px 0 0; }
+    .profile { border-top: 1px solid var(--line); padding: 18px 8px 0; display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 35px; height: 35px; background: #f4dfce; color: #805c41; border-radius: 50%; display: grid; place-items: center; font-weight: 700; }
+    .profile-name { font-weight: 650; font-size: 12px; }
+    .profile-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .main { min-width: 0; padding: 0 42px 64px; }
+    .topbar { height: 76px; border-bottom: 1px solid var(--line); display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-bottom: 34px; }
+    .today-label { color: #69756e; font-size: 12px; }
+    .top-avatar { width: 34px; height: 34px; border-radius: 50%; background: #f4dfce; display: grid; place-items: center; font-size: 12px; color: #805c41; font-weight: 700; }
+    .mobile-brand, .mobile-nav { display: none; }
+    .content { max-width: 1160px; margin: 0 auto; }
+    .page { display: none; animation: appear .2s ease; }
+    .page.active { display: block; }
+    @keyframes appear { from { opacity: .4; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .eyebrow { color: var(--green); font-size: 11px; letter-spacing: .12em; font-weight: 750; text-transform: uppercase; }
+    .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 25px; }
+    h1 { font-family: Georgia, "Times New Roman", serif; letter-spacing: -1.3px; font-size: clamp(32px, 4vw, 45px); font-weight: 500; margin: 8px 0 8px; line-height: 1.1; }
+    .subtitle { color: var(--muted); margin: 0; line-height: 1.5; }
+    .actions { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+    .btn { border: 1px solid #dfe4dc; border-radius: 10px; padding: 10px 14px; color: var(--ink); background: white; font-weight: 650; display: inline-flex; gap: 8px; align-items: center; justify-content: center; transition: .15s ease; }
+    .btn:hover { border-color: #9eb4a3; transform: translateY(-1px); }
+    .btn-primary { background: var(--green); color: white; border-color: var(--green); }
+    .btn-primary:hover { background: var(--green-dark); border-color: var(--green-dark); }
+    .btn-quiet { border-color: transparent; background: transparent; color: #66736b; }
+    .btn-small { font-size: 11px; padding: 7px 10px; border-radius: 8px; }
+    .week-strip { background: #edf2eb; border-radius: 15px; padding: 14px 18px; display: flex; align-items: center; gap: 20px; margin: 22px 0 22px; }
+    .week-icon { background: white; width: 39px; height: 39px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; }
+    .week-summary { flex: 1; }
+    .week-title { font-weight: 700; font-size: 13px; }
+    .week-sub { color: #728078; font-size: 11px; margin-top: 4px; }
+    .week-metric { border-left: 1px solid #d5dfd4; padding-left: 19px; }
+    .week-metric b { display: block; font-size: 16px; }
+    .week-metric span { color: #728078; font-size: 10px; }
+    .day-heading { display: flex; align-items: center; justify-content: space-between; margin: 27px 0 12px; }
+    .day-heading h2 { font-size: 16px; margin: 0; font-weight: 700; }
+    .day-date { color: var(--muted); font-weight: 450; margin-left: 7px; font-size: 12px; }
+    .day-meals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .meal-card { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 15px 15px 13px; min-width: 0; transition: .15s ease; }
+    .meal-card:hover { border-color: #cbd9cc; box-shadow: var(--shadow); }
+    .meal-type { color: var(--green); text-transform: uppercase; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+    .meal-title { border: 0; background: transparent; padding: 0; display: block; color: var(--ink); text-align: left; font-family: Georgia, serif; font-size: 18px; letter-spacing: -.25px; line-height: 1.2; margin: 8px 35px 7px 0; }
+    .meal-title:hover { color: var(--green); }
+    .meal-description { color: var(--muted); font-size: 11px; line-height: 1.45; min-height: 30px; margin: 0 0 12px; }
+    .meal-meta { border-top: 1px solid #efefe9; padding-top: 10px; display: flex; gap: 13px; color: #738078; font-size: 10px; }
+    .meal-meta span { white-space: nowrap; }
+    .card-tools { position: absolute; top: 13px; right: 12px; display: flex; }
+    .icon-button { border: 0; background: transparent; width: 28px; height: 28px; color: #849087; border-radius: 7px; display: grid; place-items: center; font-size: 15px; padding: 0; }
+    .icon-button:hover { color: var(--green); background: #f0f4ef; }
+    .icon-button.favorite { color: #df8961; }
+    .meal-empty { border: 1px dashed #d9e0d8; background: rgba(255,255,255,.45); color: #89938b; border-radius: 14px; display: grid; place-items: center; min-height: 150px; font-size: 12px; }
+    .callout { background: #f8efe4; color: #735b42; border-radius: 12px; padding: 13px 16px; margin: 24px 0 0; display: flex; gap: 10px; align-items: center; font-size: 12px; }
+    .section-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .section-card + .section-card { margin-top: 16px; }
+    .section-title { font-family: Georgia, serif; font-size: 21px; font-weight: 500; margin: 0; }
+    .section-card-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 17px; }
+    .recipes-toolbar { display: flex; gap: 10px; margin-bottom: 17px; flex-wrap: wrap; }
+    .field { width: 100%; border: 1px solid #dfe4dc; background: #fff; border-radius: 9px; padding: 10px 11px; color: var(--ink); }
+    .search-field { max-width: 340px; }
+    .recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .recipe-tile { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 17px; min-height: 155px; }
+    .recipe-tile .tile-icon { font-size: 24px; }
+    .recipe-tile h3 { font-family: Georgia, serif; font-size: 17px; margin: 12px 30px 6px 0; line-height: 1.2; }
+    .recipe-tile p { font-size: 11px; color: var(--muted); margin: 0 0 12px; }
+    .recipe-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { border-radius: 20px; padding: 4px 7px; background: #edf2eb; color: var(--green); font-size: 9px; font-weight: 650; }
+    .grocery-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: start; }
+    .grocery-group { border-top: 1px solid var(--line); padding-top: 15px; margin-top: 15px; }
+    .grocery-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+    .grocery-group h3 { font-size: 12px; margin: 0 0 8px; color: #68756c; }
+    .grocery-row { display: flex; align-items: center; gap: 10px; min-height: 39px; border-bottom: 1px solid #f1f1eb; }
+    .grocery-row:last-child { border-bottom: 0; }
+    .grocery-row input[type=checkbox] { accent-color: var(--green); width: 15px; height: 15px; }
+    .grocery-name { flex: 1; font-size: 12px; }
+    .grocery-qty { color: #818a82; font-size: 11px; }
+    .grocery-row.checked .grocery-name { text-decoration: line-through; color: #9ca39c; }
+    .grocery-row .icon-button { visibility: hidden; }
+    .grocery-row:hover .icon-button, .grocery-row:focus-within .icon-button { visibility: visible; }
+    .add-grocery { display: grid; grid-template-columns: 1fr 100px auto; gap: 8px; margin-top: 17px; }
+    .budget-card { background: #edf2eb; border-radius: 14px; padding: 18px; }
+    .budget-card .label { color: #748078; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+    .budget-value { font-family: Georgia, serif; font-size: 30px; margin: 8px 0 3px; }
+    .budget-note { color: #77837a; font-size: 11px; line-height: 1.45; }
+    .progress { height: 6px; background: #d7e1d7; border-radius: 8px; margin: 14px 0 8px; overflow: hidden; }
+    .progress span { display: block; height: 100%; background: var(--green); border-radius: 8px; transition: width .2s; }
+    .list-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 17px; }
+    .form-field label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
+    .form-field small { display: block; color: var(--muted); font-size: 10px; margin-top: 5px; line-height: 1.4; }
+    .form-field.full { grid-column: 1 / -1; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-chip { display: inline-flex; align-items: center; gap: 7px; background: #f6f7f3; padding: 8px 10px; border-radius: 9px; color: #516057; font-size: 11px; }
+    .check-chip input { accent-color: var(--green); margin: 0; }
+    .settings-footer { display: flex; justify-content: flex-end; gap: 9px; margin-top: 21px; }
+    .empty-state { text-align: center; padding: 55px 20px; color: var(--muted); }
+    .empty-state .empty-emoji { font-size: 34px; }
+    .empty-state h2 { font-family: Georgia, serif; color: var(--ink); font-weight: 500; font-size: 24px; margin: 13px 0 7px; }
+    .empty-state p { margin: 0 0 18px; }
+    .toast { position: fixed; bottom: 25px; left: 50%; transform: translate(-50%, 15px); background: #263d30; color: white; padding: 12px 17px; border-radius: 10px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: .2s ease; z-index: 20; font-size: 12px; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(30, 42, 34, .48); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 30; }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(660px, 100%); max-height: min(88vh, 850px); overflow: auto; background: var(--white); border-radius: 19px; box-shadow: 0 24px 80px rgba(0,0,0,.2); padding: 25px; position: relative; }
+    .modal-close { position: absolute; top: 15px; right: 15px; border: 0; background: #f2f3ee; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; color: #5b695f; }
+    .modal h2 { font-family: Georgia, serif; font-size: 30px; letter-spacing: -.6px; font-weight: 500; margin: 9px 35px 7px 0; }
+    .recipe-lede { color: var(--muted); line-height: 1.5; }
+    .recipe-stats { display: flex; gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 18px 0; padding: 12px 0; }
+    .recipe-stat { flex: 1; text-align: center; border-right: 1px solid var(--line); }
+    .recipe-stat:last-child { border: 0; }
+    .recipe-stat b { display: block; font-size: 13px; }
+    .recipe-stat span { display: block; color: var(--muted); font-size: 9px; margin-top: 4px; text-transform: uppercase; letter-spacing: .06em; }
+    .serving-control { display: flex; align-items: center; gap: 9px; margin: 15px 0; font-size: 12px; }
+    .serving-control button { border: 1px solid var(--line); background: white; width: 27px; height: 27px; border-radius: 7px; }
+    .recipe-columns { display: grid; grid-template-columns: .9fr 1.1fr; gap: 23px; }
+    .recipe-columns h3 { font-family: Georgia, serif; font-weight: 500; font-size: 18px; margin: 10px 0; }
+    .ingredient-list { list-style: none; padding: 0; margin: 0; }
+    .ingredient-list li { border-bottom: 1px solid #f0f0ea; padding: 8px 0; color: #536157; font-size: 11px; line-height: 1.4; }
+    .ingredient-list b { color: var(--ink); font-weight: 650; }
+    .instruction-list { padding-left: 18px; margin: 0; }
+    .instruction-list li { padding: 0 0 12px 3px; color: #536157; font-size: 11px; line-height: 1.55; }
+    .nutrition { background: #f2f5ef; border-radius: 10px; padding: 12px; font-size: 11px; line-height: 1.7; margin-top: 15px; color: #68756d; }
+    .nutrition b { color: var(--ink); }
+    .modal-actions { margin-top: 16px; display: flex; justify-content: space-between; gap: 8px; }
+    .inline-edit { display: grid; grid-template-columns: 1fr 100px auto auto; gap: 7px; width: 100%; }
+    .inline-edit input { min-width: 0; padding: 6px; font-size: 11px; }
+    .inline-edit button { font-size: 10px; }
+    .loading { opacity: .55; pointer-events: none; }
+    @media (max-width: 1050px) {
+      .app-shell { grid-template-columns: 210px minmax(0, 1fr); }
+      .main { padding: 0 27px 50px; }
+      .recipe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      .app-shell { display: block; padding-bottom: 67px; }
+      .sidebar { display: none; }
+      .main { padding: 0 18px 40px; }
+      .topbar { height: 58px; margin-bottom: 25px; justify-content: space-between; }
+      .mobile-brand { display: flex; align-items: center; gap: 8px; font-family: Georgia, serif; font-size: 19px; font-weight: 700; }
+      .mobile-brand .brand-mark { width: 30px; height: 30px; border-radius: 10px; font-size: 16px; }
+      .topbar .today-label { display: none; }
+      .mobile-nav { display: flex; position: fixed; z-index: 15; bottom: 0; left: 0; right: 0; background: #fffefa; border-top: 1px solid var(--line); justify-content: space-around; padding: 7px 3px max(7px, env(safe-area-inset-bottom)); }
+      .mobile-nav .nav-link { flex-direction: column; gap: 3px; font-size: 9px; padding: 5px 8px; width: auto; }
+      .mobile-nav .nav-icon { font-size: 17px; }
+      .mobile-nav .nav-count { display: none; }
+      .page-heading { align-items: flex-start; flex-direction: column; }
+      .page-heading .actions { width: 100%; }
+      .page-heading .actions .btn-primary { flex: 1; }
+      .week-strip { padding: 12px; gap: 10px; }
+      .week-metric { padding-left: 10px; }
+      .week-metric:last-child { display: none; }
+      .day-meals { grid-template-columns: 1fr; }
+      .meal-card { padding: 14px; }
+      .meal-description { min-height: 0; }
+      .grocery-layout { grid-template-columns: 1fr; }
+      .budget-card { order: -1; }
+      .grocery-row .icon-button { visibility: visible; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .form-field.full { grid-column: auto; }
+      .recipe-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 470px) {
+      .main { padding-left: 13px; padding-right: 13px; }
+      h1 { font-size: 34px; }
+      .week-title { font-size: 11px; }
+      .week-sub { font-size: 10px; }
+      .week-metric { display: none; }
+      .section-card { padding: 16px; }
+      .recipe-columns { grid-template-columns: 1fr; gap: 8px; }
+      .modal { padding: 20px 17px; }
+      .recipe-stats { flex-wrap: wrap; row-gap: 12px; }
+      .recipe-stat { min-width: 25%; }
+      .add-grocery { grid-template-columns: 1fr 75px auto; gap: 5px; }
+      .add-grocery .btn { padding: 8px; }
+    }
+    @media print {
+      body { background: white; }
+      .sidebar, .topbar, .page-heading .actions, .list-actions, .add-grocery, .budget-card, .mobile-nav, .toast { display: none !important; }
+      .app-shell { display: block; }
+      .main { padding: 0; }
+      .page { display: none !important; }
+      #page-groceries { display: block !important; }
+      .grocery-layout { display: block; }
+      .section-card { border: 0; padding: 0; }
+      .grocery-group { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">⌂</div><div><div class="brand-name">Homemade</div><div class="brand-tag">A little more delicious</div></div></div>
+      <div class="nav-label">Your kitchen</div>
+      <nav class="nav-list" id="desktop-nav"></nav>
+      <div class="sidebar-spacer"></div>
+      <div class="weekly-note"><div class="note-kicker">A gentle reminder</div><p>Good food doesn't have to be complicated.</p></div>
+      <div class="profile"><div class="avatar">H</div><div><div class="profile-name">Home cook</div><div class="profile-sub">Your personal kitchen</div></div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark">⌂</span> Homemade</div>
+        <div class="today-label" id="top-date"></div><div class="top-avatar" aria-label="Home cook">H</div>
+      </header>
+      <div class="content">
+        <section class="page active" id="page-plan" aria-labelledby="plan-heading"></section>
+        <section class="page" id="page-recipes" aria-labelledby="recipes-heading"></section>
+        <section class="page" id="page-groceries" aria-labelledby="groceries-heading"></section>
+        <section class="page" id="page-favorites" aria-labelledby="favorites-heading"></section>
+        <section class="page" id="page-settings" aria-labelledby="settings-heading"></section>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation"></nav>
+  <div class="modal-backdrop" id="recipe-modal" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title"><div class="modal" id="modal-content"></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      "use strict";
+      const navItems = [
+        { id: "plan", label: "Meal Plan", icon: "▦" },
+        { id: "recipes", label: "Recipes", icon: "♧" },
+        { id: "groceries", label: "Grocery List", icon: "☷" },
+        { id: "favorites", label: "Favorites", icon: "♡" },
+        { id: "settings", label: "Settings", icon: "⚙" }
+      ];
+      // Recipe data is intentionally local and normalized to make future API integration straightforward.
+      const recipes = [
+        { id:"berry-oats",name:"Blueberry almond overnight oats",type:"Breakfast",emoji:"🫐",description:"Creamy oats with berries, chia and a little maple.",prep:10,cook:0,difficulty:"Easy",calories:385,protein:15,carbs:55,fat:12,tags:["vegetarian","vegan","gluten-free"],ingredients:[["rolled oats",.5,"cup","Grains and bakery"],["unsweetened almond milk",.75,"cup","Dairy and eggs"],["blueberries",.5,"cup","Produce"],["chia seeds",1,"tbsp","Canned and packaged foods"],["maple syrup",1,"tsp","Spices and sauces"],["sliced almonds",1,"tbsp","Canned and packaged foods"]],instructions:["Stir the oats, almond milk, chia seeds and maple syrup together in a jar or small bowl.","Cover and refrigerate for at least 4 hours, or overnight, until thick and creamy.","Top with blueberries and sliced almonds just before serving. Add a splash of milk if you like a looser texture."]},
+        { id:"spinach-eggs",name:"Spinach & feta breakfast eggs",type:"Breakfast",emoji:"🍳",description:"Soft scrambled eggs, wilted spinach and salty feta.",prep:5,cook:8,difficulty:"Easy",calories:310,protein:23,carbs:8,fat:21,tags:["vegetarian","keto","low-carb","gluten-free"],ingredients:[["eggs",2,"each","Dairy and eggs"],["baby spinach",1,"cup","Produce"],["feta cheese",.25,"cup","Dairy and eggs"],["olive oil",1,"tsp","Spices and sauces"],["black pepper",.125,"tsp","Spices and sauces"]],instructions:["Warm the olive oil in a nonstick skillet over medium heat. Add spinach and cook until just wilted.","Whisk eggs with black pepper, pour into the skillet and gently stir until softly set.","Remove from heat and fold in crumbled feta."]},
+        { id:"banana-pancakes",name:"Banana oat pancakes",type:"Breakfast",emoji:"🥞",description:"Fluffy, naturally sweet pancakes with warm cinnamon.",prep:10,cook:12,difficulty:"Easy",calories:402,protein:14,carbs:62,fat:11,tags:["vegetarian","gluten-free"],ingredients:[["ripe banana",1,"each","Produce"],["eggs",2,"each","Dairy and eggs"],["rolled oats",.75,"cup","Grains and bakery"],["baking powder",.5,"tsp","Spices and sauces"],["cinnamon",.25,"tsp","Spices and sauces"],["plain Greek yogurt",.25,"cup","Dairy and eggs"],["blueberries",.25,"cup","Produce"]],instructions:["Blend banana, eggs, oats, baking powder and cinnamon until nearly smooth. Rest for 3 minutes.","Heat a lightly oiled skillet over medium-low. Cook small rounds for 2–3 minutes per side, flipping when bubbles form.","Serve with Greek yogurt and fresh blueberries."]},
+        { id:"avocado-toast",name:"Avocado toast with jammy eggs",type:"Breakfast",emoji:"🥑",description:"Sourdough, smashed avocado and golden soft-boiled eggs.",prep:8,cook:7,difficulty:"Easy",calories:430,protein:18,carbs:39,fat:23,tags:["vegetarian"],ingredients:[["eggs",2,"each","Dairy and eggs"],["sourdough bread",2,"slices","Grains and bakery"],["avocado",1,"each","Produce"],["lemon",.25,"each","Produce"],["red pepper flakes",.125,"tsp","Spices and sauces"],["sea salt",.125,"tsp","Spices and sauces"]],instructions:["Lower eggs into gently boiling water and cook for 7 minutes. Transfer to cold water, then peel.","Toast the sourdough. Mash avocado with lemon juice and salt, then spread over the toast.","Halve the eggs and place on top. Finish with red pepper flakes."]},
+        { id:"chickpea-salad",name:"Herby chickpea & cucumber bowls",type:"Lunch",emoji:"🥗",description:"Crisp cucumber, chickpeas and lemony tahini dressing.",prep:15,cook:0,difficulty:"Easy",calories:440,protein:16,carbs:54,fat:18,tags:["vegetarian","vegan","gluten-free"],ingredients:[["chickpeas",1,"can","Canned and packaged foods"],["cucumber",1,"each","Produce"],["cherry tomatoes",1,"cup","Produce"],["red onion",.25,"each","Produce"],["parsley",.25,"cup","Produce"],["tahini",2,"tbsp","Spices and sauces"],["lemon",1,"each","Produce"],["quinoa",.5,"cup","Grains and bakery"]],instructions:["Rinse and drain the chickpeas. Dice cucumber and halve the cherry tomatoes; finely slice the red onion.","Whisk tahini with lemon juice, 1 tablespoon water and a pinch of salt until creamy.","Divide cooked quinoa between bowls, add chickpeas and vegetables, then drizzle with dressing and finish with parsley."]},
+        { id:"chicken-wrap",name:"Lemony chicken & greens wraps",type:"Lunch",emoji:"🌯",description:"Juicy chicken, crunchy greens and a quick yogurt sauce.",prep:12,cook:15,difficulty:"Easy",calories:498,protein:38,carbs:44,fat:18,tags:[],ingredients:[["chicken breast",5,"oz","Meat and seafood"],["whole wheat tortillas",2,"each","Grains and bakery"],["plain Greek yogurt",.25,"cup","Dairy and eggs"],["romaine lettuce",1,"cup","Produce"],["cucumber",.5,"each","Produce"],["lemon",.5,"each","Produce"],["garlic",1,"clove","Produce"],["olive oil",1,"tsp","Spices and sauces"]],instructions:["Season chicken with salt and pepper. Heat olive oil in a skillet and cook chicken 6–7 minutes per side, until it reaches 165°F (74°C). Rest, then slice.","Mix yogurt with lemon juice and grated garlic to make a quick sauce.","Warm tortillas, fill with sliced chicken, romaine and cucumber, and spoon over the sauce."]},
+        { id:"tuna-whitebean",name:"Tuna & white bean crunch salad",type:"Lunch",emoji:"🐟",description:"A no-cook pantry lunch with lemon, celery and fresh dill.",prep:12,cook:0,difficulty:"Easy",calories:390,protein:32,carbs:35,fat:12,tags:["gluten-free","low-carb"],ingredients:[["tuna in water",1,"can","Canned and packaged foods"],["cannellini beans",1,"can","Canned and packaged foods"],["celery",2,"stalks","Produce"],["red onion",.125,"each","Produce"],["lemon",.5,"each","Produce"],["fresh dill",1,"tbsp","Produce"],["olive oil",1,"tbsp","Spices and sauces"],["mixed greens",2,"cups","Produce"]],instructions:["Drain tuna and beans. Flake the tuna into a large bowl and add the beans.","Finely slice celery and red onion. Add to the bowl with dill, lemon juice and olive oil.","Toss gently, season with salt and pepper, and serve over mixed greens."]},
+        { id:"sweet-potato-soup",name:"Roasted tomato & red lentil soup",type:"Lunch",emoji:"🍅",description:"Cozy, protein-rich lentils with tomatoes and warming spices.",prep:10,cook:30,difficulty:"Easy",calories:425,protein:21,carbs:62,fat:10,tags:["vegetarian","vegan","gluten-free"],ingredients:[["red lentils",.75,"cup","Canned and packaged foods"],["crushed tomatoes",1,"can","Canned and packaged foods"],["yellow onion",1,"each","Produce"],["vegetable broth",3,"cups","Canned and packaged foods"],["carrot",1,"each","Produce"],["garlic",2,"cloves","Produce"],["cumin",1,"tsp","Spices and sauces"],["olive oil",1,"tbsp","Spices and sauces"],["plain yogurt",2,"tbsp","Dairy and eggs"]],instructions:["Warm olive oil in a pot over medium heat. Cook diced onion and carrot for 5 minutes, then add garlic and cumin.","Stir in lentils, crushed tomatoes and broth. Bring to a boil, then simmer uncovered for 22–25 minutes until lentils are tender.","Season to taste. Serve as is or blend partially, with a spoonful of yogurt on top."]},
+        { id:"salmon-rice",name:"Ginger salmon rice bowls",type:"Dinner",emoji:"🍣",description:"Glazed salmon with fluffy rice and quick sesame greens.",prep:12,cook:18,difficulty:"Medium",calories:585,protein:39,carbs:58,fat:22,tags:["gluten-free"],ingredients:[["salmon fillet",5,"oz","Meat and seafood"],["brown rice",.5,"cup","Grains and bakery"],["broccoli",1,"cup","Produce"],["low-sodium tamari",1,"tbsp","Spices and sauces"],["honey",1,"tsp","Spices and sauces"],["fresh ginger",1,"tsp","Produce"],["sesame oil",1,"tsp","Spices and sauces"],["sesame seeds",1,"tsp","Spices and sauces"]],instructions:["Cook brown rice according to package directions. Mix tamari, honey and grated ginger.","Place salmon on a lined baking tray, brush with half the glaze and bake at 400°F (200°C) for 12–15 minutes, until it flakes easily.","Steam broccoli until bright green. Toss with sesame oil, then serve alongside rice and salmon with remaining glaze and sesame seeds."]},
+        { id:"veggie-tacos",name:"Smoky black bean tacos",type:"Dinner",emoji:"🌮",description:"Quick skillet beans, crunchy slaw and creamy lime sauce.",prep:15,cook:15,difficulty:"Easy",calories:510,protein:19,carbs:72,fat:16,tags:["vegetarian","vegan","gluten-free"],ingredients:[["black beans",1,"can","Canned and packaged foods"],["corn tortillas",4,"each","Grains and bakery"],["red cabbage",1,"cup","Produce"],["avocado",.5,"each","Produce"],["lime",1,"each","Produce"],["smoked paprika",.5,"tsp","Spices and sauces"],["cumin",.5,"tsp","Spices and sauces"],["unsweetened plant-based yogurt",.25,"cup","Canned and packaged foods"],["cilantro",.25,"cup","Produce"]],instructions:["Rinse beans. Warm in a skillet with paprika, cumin and 2 tablespoons water for 6–8 minutes.","Toss shredded cabbage with half the lime juice and a pinch of salt. Mix plant-based yogurt with the remaining lime juice.","Warm tortillas in a dry pan. Fill with beans, slaw and avocado; finish with lime yogurt and cilantro."]},
+        { id:"chicken-tray",name:"One-pan lemon herb chicken",type:"Dinner",emoji:"🍗",description:"Golden chicken thighs with potatoes and green beans.",prep:15,cook:35,difficulty:"Easy",calories:620,protein:42,carbs:47,fat:27,tags:["gluten-free"],ingredients:[["chicken thighs",6,"oz","Meat and seafood"],["baby potatoes",8,"oz","Produce"],["green beans",1,"cup","Produce"],["lemon",1,"each","Produce"],["garlic",2,"cloves","Produce"],["olive oil",1,"tbsp","Spices and sauces"],["dried oregano",1,"tsp","Spices and sauces"]],instructions:["Heat oven to 425°F (220°C). Halve potatoes and toss with half the oil, oregano, salt and pepper on a sheet pan.","Nestle chicken thighs among the potatoes. Rub with remaining oil, garlic and lemon zest; roast for 25 minutes.","Add green beans and lemon wedges to the pan. Roast another 10 minutes, until chicken reaches 165°F (74°C) and vegetables are tender."]},
+        { id:"tofu-stirfry",name:"Crispy tofu & vegetable stir-fry",type:"Dinner",emoji:"🥦",description:"Colorful vegetables, crisp tofu and a savory sesame sauce.",prep:15,cook:20,difficulty:"Medium",calories:545,protein:27,carbs:64,fat:21,tags:["vegetarian","vegan"],ingredients:[["extra-firm tofu",6,"oz","Dairy and eggs"],["jasmine rice",.5,"cup","Grains and bakery"],["bell pepper",1,"each","Produce"],["snap peas",1,"cup","Produce"],["cornstarch",1,"tbsp","Canned and packaged foods"],["low-sodium soy sauce",1,"tbsp","Spices and sauces"],["sesame oil",1,"tsp","Spices and sauces"],["fresh ginger",1,"tsp","Produce"],["garlic",1,"clove","Produce"]],instructions:["Cook rice following package directions. Pat tofu dry and cut into 1-inch cubes; toss with cornstarch.","Sear tofu in a hot nonstick pan with a little oil for 7–8 minutes, turning until golden. Set aside.","Stir-fry sliced pepper and snap peas for 4 minutes. Add ginger, garlic and soy sauce, return tofu to the pan and toss. Serve over rice."]},
+        { id:"pesto-pasta",name:"Green pesto & roasted vegetable pasta",type:"Dinner",emoji:"🍝",description:"Whole-wheat pasta tossed with pesto, zucchini and sweet tomatoes.",prep:10,cook:20,difficulty:"Easy",calories:560,protein:20,carbs:75,fat:20,tags:["vegetarian"],ingredients:[["whole wheat pasta",3,"oz","Grains and bakery"],["zucchini",1,"each","Produce"],["cherry tomatoes",1,"cup","Produce"],["basil pesto",2,"tbsp","Spices and sauces"],["parmesan",2,"tbsp","Dairy and eggs"],["olive oil",1,"tsp","Spices and sauces"],["baby spinach",1,"cup","Produce"]],instructions:["Heat oven to 425°F (220°C). Slice zucchini and toss with tomatoes and olive oil; roast for 15 minutes.","Boil pasta in salted water until just tender. Reserve ¼ cup pasta water, then drain.","Toss hot pasta with pesto, spinach and a splash of pasta water. Fold in roasted vegetables and finish with parmesan."]},
+        { id:"turkey-chili",name:"Weeknight turkey & bean chili",type:"Dinner",emoji:"🥣",description:"A hearty one-pot chili with beans, peppers and warm spices.",prep:12,cook:35,difficulty:"Easy",calories:530,protein:37,carbs:51,fat:18,tags:["gluten-free"],ingredients:[["ground turkey",5,"oz","Meat and seafood"],["kidney beans",.5,"can","Canned and packaged foods"],["crushed tomatoes",.5,"can","Canned and packaged foods"],["yellow onion",.5,"each","Produce"],["bell pepper",.5,"each","Produce"],["chili powder",1,"tsp","Spices and sauces"],["cumin",.5,"tsp","Spices and sauces"],["olive oil",1,"tsp","Spices and sauces"],["plain yogurt",2,"tbsp","Dairy and eggs"]],instructions:["Heat oil in a heavy pot. Add diced onion and pepper and cook for 5 minutes until softened.","Add turkey and brown, breaking it up with a spoon. Stir in chili powder and cumin.","Add drained beans and tomatoes with ½ cup water. Simmer uncovered for 25 minutes. Serve with yogurt."]},
+        { id:"yogurt-fruit",name:"Seasonal fruit & honey yogurt",type:"Snack",emoji:"🍓",description:"Cool Greek yogurt with fresh fruit and crunchy seeds.",prep:5,cook:0,difficulty:"Easy",calories:220,protein:18,carbs:29,fat:5,tags:["vegetarian","gluten-free"],ingredients:[["plain Greek yogurt",.75,"cup","Dairy and eggs"],["strawberries",.5,"cup","Produce"],["honey",1,"tsp","Spices and sauces"],["pumpkin seeds",1,"tbsp","Canned and packaged foods"]],instructions:["Spoon Greek yogurt into a bowl.","Slice strawberries and scatter over the yogurt.","Drizzle with honey and finish with pumpkin seeds."]},
+        { id:"hummus-veggies",name:"Hummus & crunchy garden vegetables",type:"Snack",emoji:"🥕",description:"A colorful handful of fresh vegetables with creamy hummus.",prep:8,cook:0,difficulty:"Easy",calories:195,protein:7,carbs:24,fat:9,tags:["vegetarian","vegan","gluten-free"],ingredients:[["hummus",.25,"cup","Canned and packaged foods"],["carrot",1,"each","Produce"],["cucumber",.5,"each","Produce"],["red bell pepper",.5,"each","Produce"]],instructions:["Cut carrot, cucumber and bell pepper into sticks.","Spoon hummus into a small bowl and serve with the vegetables for dipping."]},
+        { id:"apple-almond",name:"Apple slices & almond butter",type:"Snack",emoji:"🍎",description:"Sweet-tart apple paired with satisfying almond butter.",prep:3,cook:0,difficulty:"Easy",calories:210,protein:6,carbs:28,fat:11,tags:["vegetarian","vegan","gluten-free"],ingredients:[["apple",1,"each","Produce"],["almond butter",1,"tbsp","Canned and packaged foods"],["cinnamon",.125,"tsp","Spices and sauces"]],instructions:["Core and slice the apple into wedges.","Serve with almond butter for dipping and a light sprinkle of cinnamon."]},
+        { id:"edamame",name:"Ginger sea-salt edamame",type:"Snack",emoji:"🫛",description:"A protein-rich, five-minute snack with a zing of ginger.",prep:2,cook:5,difficulty:"Easy",calories:180,protein:17,carbs:15,fat:7,tags:["vegetarian","vegan","gluten-free"],ingredients:[["frozen edamame",1,"cup","Frozen foods"],["fresh ginger",.5,"tsp","Produce"],["sea salt",.125,"tsp","Spices and sauces"],["lemon",.25,"each","Produce"]],instructions:["Steam edamame according to package directions, about 5 minutes.","Toss warm edamame with grated ginger, salt and a squeeze of lemon.","Serve warm; discard the pods as you eat."]},
+        { id:"chia-pudding",name:"Coconut chia breakfast pudding",type:"Breakfast",emoji:"🥥",description:"Make-ahead chia pudding with mango and toasted coconut.",prep:8,cook:0,difficulty:"Easy",calories:365,protein:10,carbs:48,fat:17,tags:["vegetarian","vegan","gluten-free"],ingredients:[["chia seeds",3,"tbsp","Canned and packaged foods"],["unsweetened coconut milk",.75,"cup","Canned and packaged foods"],["maple syrup",1,"tsp","Spices and sauces"],["mango",.5,"cup","Produce"],["shredded coconut",1,"tbsp","Canned and packaged foods"]],instructions:["Whisk chia seeds, coconut milk and maple syrup in a jar until evenly combined.","Refrigerate for at least 4 hours, stirring once after 10 minutes to prevent clumps.","Top with diced mango and shredded coconut to serve."]},
+        { id:"tofu-scramble",name:"Golden turmeric tofu scramble",type:"Breakfast",emoji:"🌱",description:"Savory crumbled tofu with spinach and warm turmeric.",prep:8,cook:10,difficulty:"Easy",calories:335,protein:22,carbs:17,fat:20,tags:["vegetarian","vegan","gluten-free","low-carb"],ingredients:[["extra-firm tofu",5,"oz","Dairy and eggs"],["baby spinach",1,"cup","Produce"],["cherry tomatoes",.5,"cup","Produce"],["turmeric",.25,"tsp","Spices and sauces"],["olive oil",1,"tsp","Spices and sauces"],["nutritional yeast",1,"tbsp","Canned and packaged foods"]],instructions:["Pat tofu dry, then crumble into bite-sized pieces.","Heat olive oil in a skillet. Add tofu, turmeric, salt and pepper; cook for 5 minutes, stirring occasionally.","Fold in spinach and halved tomatoes until the greens wilt. Finish with nutritional yeast."]},
+        { id:"breakfast-burrito",name:"Black bean breakfast burrito",type:"Breakfast",emoji:"🌯",description:"A filling wrap with eggs, black beans and fresh salsa.",prep:10,cook:10,difficulty:"Easy",calories:455,protein:24,carbs:52,fat:17,tags:["vegetarian"],ingredients:[["eggs",2,"each","Dairy and eggs"],["black beans",.5,"cup","Canned and packaged foods"],["flour tortilla",1,"each","Grains and bakery"],["salsa",2,"tbsp","Spices and sauces"],["cheddar cheese",2,"tbsp","Dairy and eggs"],["baby spinach",.5,"cup","Produce"]],instructions:["Warm black beans in a small pan. Whisk eggs and scramble in a nonstick skillet until just set.","Warm the tortilla, then layer on eggs, beans, spinach, cheddar and salsa.","Fold in the sides and roll into a snug burrito. Serve warm."]},
+        { id:"peanut-butter-toast",name:"Peanut butter banana toast",type:"Breakfast",emoji:"🍌",description:"Whole-grain toast with creamy peanut butter and banana.",prep:5,cook:2,difficulty:"Easy",calories:390,protein:13,carbs:54,fat:15,tags:["vegetarian","vegan"],ingredients:[["whole grain bread",2,"slices","Grains and bakery"],["peanut butter",2,"tbsp","Canned and packaged foods"],["banana",1,"each","Produce"],["hemp seeds",1,"tsp","Canned and packaged foods"]],instructions:["Toast bread until golden and crisp.","Spread each slice with peanut butter and top with sliced banana.","Sprinkle with hemp seeds and serve."]},
+        { id:"greek-pita",name:"Greek chickpea pita pockets",type:"Lunch",emoji:"🫓",description:"Warm pita stuffed with spiced chickpeas and crunchy vegetables.",prep:12,cook:8,difficulty:"Easy",calories:475,protein:17,carbs:68,fat:15,tags:["vegetarian","vegan"],ingredients:[["chickpeas",1,"can","Canned and packaged foods"],["whole wheat pita",2,"each","Grains and bakery"],["cucumber",.5,"each","Produce"],["cherry tomatoes",.5,"cup","Produce"],["tahini",1,"tbsp","Spices and sauces"],["lemon",.5,"each","Produce"],["cumin",.5,"tsp","Spices and sauces"]],instructions:["Drain chickpeas and warm them in a skillet with cumin and a splash of water for 6–8 minutes.","Stir tahini with lemon juice and a tablespoon of water until pourable.","Fill warm pita with chickpeas, diced cucumber and tomatoes; drizzle with tahini sauce."]},
+        { id:"caprese-lunch",name:"Caprese white bean toast",type:"Lunch",emoji:"🍅",description:"Creamy white beans, ripe tomato and basil on toasted sourdough.",prep:10,cook:4,difficulty:"Easy",calories:430,protein:19,carbs:58,fat:14,tags:["vegetarian"],ingredients:[["cannellini beans",.75,"can","Canned and packaged foods"],["sourdough bread",2,"slices","Grains and bakery"],["tomato",1,"each","Produce"],["fresh basil",.25,"cup","Produce"],["mozzarella",2,"oz","Dairy and eggs"],["olive oil",1,"tsp","Spices and sauces"],["balsamic vinegar",1,"tsp","Spices and sauces"]],instructions:["Toast sourdough until crisp. Drain and lightly mash beans with olive oil, salt and pepper.","Spread beans over toast. Add sliced tomato and torn mozzarella.","Finish with basil and a small splash of balsamic vinegar."]},
+        { id:"sesame-noodles",name:"Sesame soba & crunchy vegetables",type:"Lunch",emoji:"🍜",description:"Chilled buckwheat noodles with a bright sesame-lime dressing.",prep:12,cook:8,difficulty:"Easy",calories:465,protein:17,carbs:67,fat:15,tags:["vegetarian","vegan"],ingredients:[["soba noodles",3,"oz","Grains and bakery"],["carrot",1,"each","Produce"],["cucumber",.5,"each","Produce"],["edamame",.5,"cup","Frozen foods"],["low-sodium soy sauce",1,"tbsp","Spices and sauces"],["sesame oil",1,"tsp","Spices and sauces"],["lime",.5,"each","Produce"],["sesame seeds",1,"tsp","Spices and sauces"]],instructions:["Cook soba according to package directions. Rinse under cool water and drain well.","Whisk soy sauce, sesame oil and lime juice in a large bowl.","Toss noodles with shredded carrot, cucumber and edamame. Finish with sesame seeds."]},
+        { id:"roasted-veg-grain",name:"Roasted vegetable & farro bowl",type:"Lunch",emoji:"🥙",description:"Nutty farro, roasted vegetables and a lemony herb dressing.",prep:12,cook:20,difficulty:"Easy",calories:490,protein:16,carbs:73,fat:15,tags:["vegetarian","vegan"],ingredients:[["farro",.5,"cup","Grains and bakery"],["zucchini",.5,"each","Produce"],["red bell pepper",.5,"each","Produce"],["chickpeas",.5,"can","Canned and packaged foods"],["lemon",.5,"each","Produce"],["olive oil",1,"tsp","Spices and sauces"],["parsley",2,"tbsp","Produce"]],instructions:["Cook farro in salted water according to package directions; drain well.","Toss diced zucchini and pepper with olive oil, then roast at 425°F (220°C) for 18 minutes.","Build bowls with farro, chickpeas and roasted vegetables. Finish with lemon juice and chopped parsley."]},
+        { id:"shrimp-couscous",name:"Garlic shrimp & lemon couscous",type:"Dinner",emoji:"🍤",description:"Fast skillet shrimp with fluffy couscous and tender zucchini.",prep:10,cook:15,difficulty:"Easy",calories:510,protein:36,carbs:58,fat:14,tags:[],ingredients:[["shrimp",5,"oz","Meat and seafood"],["whole wheat couscous",.5,"cup","Grains and bakery"],["zucchini",.5,"each","Produce"],["garlic",2,"cloves","Produce"],["lemon",.5,"each","Produce"],["olive oil",1,"tsp","Spices and sauces"],["parsley",2,"tbsp","Produce"]],instructions:["Prepare couscous according to package directions; fluff with a fork and fold in lemon zest.","Warm olive oil in a skillet. Add diced zucchini and cook for 4 minutes, then add garlic.","Add shrimp and cook 2–3 minutes per side until opaque. Finish with lemon juice and parsley; serve over couscous."]},
+        { id:"lentil-sweet-potato",name:"Stuffed sweet potatoes with lentils",type:"Dinner",emoji:"🍠",description:"Fluffy baked sweet potatoes piled with warmly spiced lentils.",prep:10,cook:35,difficulty:"Easy",calories:520,protein:20,carbs:86,fat:11,tags:["vegetarian","vegan","gluten-free"],ingredients:[["sweet potato",1,"each","Produce"],["brown lentils",.5,"cup","Canned and packaged foods"],["vegetable broth",1,"cup","Canned and packaged foods"],["baby spinach",1,"cup","Produce"],["cumin",.5,"tsp","Spices and sauces"],["lemon",.25,"each","Produce"],["olive oil",1,"tsp","Spices and sauces"]],instructions:["Heat oven to 400°F (200°C). Pierce sweet potato with a fork and bake until tender, 30–35 minutes.","Meanwhile, simmer lentils with broth and cumin for 20–25 minutes until tender; drain any excess liquid.","Stir spinach into the hot lentils to wilt. Split the potato, fill with lentils and finish with lemon juice."]},
+        { id:"trail-mix",name:"Apricot, almond & seed trail mix",type:"Snack",emoji:"🥜",description:"A sweet-and-salty handful for an afternoon energy boost.",prep:3,cook:0,difficulty:"Easy",calories:205,protein:7,carbs:24,fat:11,tags:["vegetarian","vegan","gluten-free"],ingredients:[["dried apricots",2,"each","Canned and packaged foods"],["almonds",1,"tbsp","Canned and packaged foods"],["pumpkin seeds",1,"tbsp","Canned and packaged foods"],["dark chocolate chips",1,"tsp","Canned and packaged foods"]],instructions:["Roughly chop the dried apricots.","Combine apricots, almonds, pumpkin seeds and dark chocolate chips.","Portion into a small container for an easy snack."]},
+        { id:"rice-cakes",name:"Rice cakes with avocado & lime",type:"Snack",emoji:"🥑",description:"Crisp rice cakes with creamy avocado and a squeeze of lime.",prep:5,cook:0,difficulty:"Easy",calories:190,protein:4,carbs:26,fat:10,tags:["vegetarian","vegan","gluten-free"],ingredients:[["brown rice cakes",2,"each","Grains and bakery"],["avocado",.5,"each","Produce"],["lime",.25,"each","Produce"],["sea salt",.125,"tsp","Spices and sauces"]],instructions:["Mash avocado with lime juice and a pinch of salt.","Spread over rice cakes just before serving so they stay crisp."]},
+        { id:"cottage-fruit",name:"Cottage cheese & pineapple cup",type:"Snack",emoji:"🍍",description:"A creamy, protein-packed snack with bright pineapple.",prep:4,cook:0,difficulty:"Easy",calories:205,protein:19,carbs:23,fat:5,tags:["vegetarian","gluten-free"],ingredients:[["cottage cheese",.5,"cup","Dairy and eggs"],["pineapple",.5,"cup","Produce"],["sunflower seeds",1,"tsp","Canned and packaged foods"]],instructions:["Spoon cottage cheese into a bowl.","Top with diced pineapple and sunflower seeds."]}
+        ,{ id:"roasted-chickpeas",name:"Smoky roasted chickpeas",type:"Snack",emoji:"🫘",description:"Crunchy, savory chickpeas with a little smoked paprika.",prep:5,cook:25,difficulty:"Easy",calories:190,protein:9,carbs:29,fat:5,tags:["vegetarian","vegan","gluten-free"],ingredients:[["chickpeas",.5,"can","Canned and packaged foods"],["olive oil",1,"tsp","Spices and sauces"],["smoked paprika",.25,"tsp","Spices and sauces"],["sea salt",.125,"tsp","Spices and sauces"]],instructions:["Heat oven to 400°F (200°C). Drain, rinse and thoroughly pat chickpeas dry.","Toss with olive oil, smoked paprika and salt; spread on a sheet pan.","Roast for 20–25 minutes, shaking the pan once, until crisp. Cool slightly before eating."]}
+      ];
+      const defaults = { people:2, diet:"none", avoid:"", meals:["Breakfast","Lunch","Dinner"], snacks:false, budget:120, skill:"Any", maxTime:60, pantry:"", leftovers:false };
+      const readStore = (key, fallback) => { try { const v = localStorage.getItem("homemade-" + key); return v ? JSON.parse(v) : fallback; } catch (e) { console.error("Could not read saved " + key, e); return fallback; } };
+      let preferences = { ...defaults, ...readStore("preferences", {}) };
+      let plan = readStore("plan", []);
+      let favorites = readStore("favorites", []);
+      let checkedItems = readStore("checked", []);
+      let customItems = readStore("custom", []);
+      let removedItems = readStore("removed", []);
+      let activeRecipeId = null, modalServings = 2, toastTimer, currentPage = "plan";
+      const persist = () => {
+        try {
+          localStorage.setItem("homemade-preferences", JSON.stringify(preferences));
+          localStorage.setItem("homemade-plan", JSON.stringify(plan));
+          localStorage.setItem("homemade-favorites", JSON.stringify(favorites));
+          localStorage.setItem("homemade-checked", JSON.stringify(checkedItems));
+          localStorage.setItem("homemade-custom", JSON.stringify(customItems));
+          localStorage.setItem("homemade-removed", JSON.stringify(removedItems));
+        } catch (e) { console.error("Could not save Homemade data", e); toast("Couldn't save changes on this device."); }
+      };
+      const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+      const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
+      const dateString = d => new Intl.DateTimeFormat("en-US", { weekday:"long", month:"short", day:"numeric" }).format(d);
+      const shortDate = d => new Intl.DateTimeFormat("en-US", { month:"short", day:"numeric" }).format(d);
+      const iso = d => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`; };
+      const getRecipe = id => recipes.find(r => r.id === id);
+      const byId = Object.fromEntries(recipes.map(r => [r.id, r]));
+      function toast(message) {
+        const el = document.getElementById("toast"); el.textContent = message; el.classList.add("show");
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+      }
+      function renderNav() {
+        const markup = navItems.map(n => `<button class="nav-link ${currentPage===n.id?"active":""}" data-nav="${n.id}" ${currentPage===n.id?'aria-current="page"':""}><span class="nav-icon" aria-hidden="true">${n.icon}</span><span>${n.label}</span>${n.id==="groceries"?`<span class="nav-count">${groceryItems().length}</span>`:""}</button>`).join("");
+        document.getElementById("desktop-nav").innerHTML = markup;
+        document.getElementById("mobile-nav").innerHTML = markup;
+      }
+      function setPage(id) {
+        currentPage = id;
+        document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + id));
+        renderNav();
+        if (id === "plan") renderPlan();
+        if (id === "recipes") renderRecipes();
+        if (id === "groceries") renderGroceries();
+        if (id === "favorites") renderFavorites();
+        if (id === "settings") renderSettings();
+        window.scrollTo({ top:0, behavior:"smooth" });
+      }
+      function mealCountLabel() { return `${preferences.meals.length + (preferences.snacks?1:0)} meals a day`; }
+      function ensurePlan() { if (!Array.isArray(plan) || !plan.length) generatePlan(false); }
+      function planDates() {
+        const start = plan[0]?.date ? new Date(plan[0].date + "T12:00:00") : new Date();
+        return Array.from({length:7},(_,i)=>{ const d=new Date(start); d.setDate(start.getDate()+i); return d; });
+      }
+      function renderPlan() {
+        const target = document.getElementById("page-plan");
+        if (!plan.length) { target.innerHTML = `<div class="empty-state"><div class="empty-emoji">🥕</div><h2>Your next delicious week</h2><p>Choose your preferences and we'll put together a thoughtful meal plan.</p><button class="btn btn-primary" data-action="go-settings">Set preferences & plan</button></div>`; return; }
+        const dates = planDates(), start = dates[0], end = dates[6];
+        const range = `${shortDate(start)} – ${new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric"}).format(end)}`;
+        const mealsPlanned = plan.reduce((n,d)=>n+d.meals.length,0);
+        const expectedMeals=preferences.meals.length+(preferences.snacks?1:0);
+        const cards = plan.map((day,i) => {
+          const date = dates[i];
+          return `<div class="day-heading"><h2>${dateString(date)} <span class="day-date">${i===0?"· Starts today":""}</span></h2><button class="btn btn-small" data-action="replace-day" data-day="${i}" aria-label="Replace all meals for ${dateString(date)}">↻ Replace day</button></div>
+            <div class="day-meals">${day.meals.map((entry,j)=>{
+              const r=getRecipe(entry.recipeId); if(!r) return "";
+              const servings=entry.servings||preferences.people;
+              return `<article class="meal-card"><div class="meal-type">${escapeHtml(r.type)} · ${servings} servings</div><div class="card-tools"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><button class="icon-button" data-action="regenerate" data-day="${i}" data-meal="${j}" aria-label="Replace ${escapeHtml(r.name)}">↻</button></div><button class="meal-title" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p class="meal-description">${escapeHtml(r.description)}</p><div class="meal-meta"><span>◷ ${r.prep+r.cook} min</span><span>⚡ ${r.calories} cal</span><span>${r.difficulty}</span></div></article>`;
+            }).join("")}${day.meals.length<expectedMeals?`<div class="meal-empty">Some meals couldn't be matched to these preferences. Adjust settings for more options.</div>`:""}</div>`;
+        }).join("");
+        const days = new Set(plan.map(d=>d.date));
+        const estimatedTotal = groceryItems().reduce((s,x)=>s+x.price,0);
+        target.innerHTML = `<div class="page-heading"><div><div class="eyebrow">A fresh start, one meal at a time</div><h1 id="plan-heading">Your meal plan</h1><p class="subtitle">A little structure, a lot of good food.</p></div><div class="actions"><button class="btn" data-action="go-settings">⚙ Preferences</button><button class="btn btn-primary" data-action="generate"><span>✦</span> Generate new week</button></div></div>
+          <div class="week-strip"><div class="week-icon">🗓</div><div class="week-summary"><div class="week-title">Your week at a glance</div><div class="week-sub">${range} · ${preferences.people} ${preferences.people===1?"person":"people"} · ${mealCountLabel()}</div></div><div class="week-metric"><b>${mealsPlanned}</b><span>meals planned</span></div><div class="week-metric"><b>$${Math.round(estimatedTotal)}</b><span>est. groceries</span></div></div>${cards}
+          <div class="callout"><span>✦</span><span>Have a favorite? Tap the heart to save it, or use ↻ to find a fresh idea just for that meal.</span></div>`;
+      }
+      function compatible(r) {
+        const diet=preferences.diet;
+        if (diet!=="none" && !r.tags.includes(diet)) return false;
+        const avoid=preferences.avoid.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+        const ingNames=r.ingredients.map(x=>x[0].toLowerCase());
+        if (avoid.some(a=>ingNames.some(n=>n.includes(a)))) return false;
+        if (preferences.skill==="Beginner" && r.difficulty==="Advanced") return false;
+        return r.prep+r.cook<=Number(preferences.maxTime||60);
+      }
+      function candidates(type, used) {
+        let all=recipes.filter(r=>r.type===type && compatible(r));
+        if (!preferences.leftovers) all=all.filter(r=>!used.has(r.id));
+        return all;
+      }
+      function createDay(date, excludedIds=new Set()) {
+        const types=[...preferences.meals,...(preferences.snacks?["Snack"]:[])];
+        const used=excludedIds, meals=[];
+        for(const type of types) {
+          let pool=candidates(type,used);
+          if(!pool.length) continue;
+          // Prefer variety in the weekly plan while keeping compatible options in rotation.
+          const recipe=pool[Math.floor(Math.random()*pool.length)];
+          meals.push({recipeId:recipe.id,servings:Number(preferences.people)||2}); used.add(recipe.id);
+        }
+        return {date:iso(date),meals};
+      }
+      function generatePlan(showMessage=true) {
+        const button=document.querySelector('[data-action="generate"]');
+        if(button) { button.classList.add("loading"); button.setAttribute("aria-busy","true"); }
+        window.setTimeout(()=>{
+          const start=new Date(); start.setHours(12,0,0,0);
+          const used=new Set();
+          plan=Array.from({length:7},(_,i)=>{const d=new Date(start); d.setDate(start.getDate()+i); return createDay(d,used);});
+          checkedItems=[]; removedItems=[]; persist(); renderPlan(); renderNav();
+          if(showMessage) toast("Your new week is ready. Happy cooking!");
+        },180);
+      }
+      function replaceMeal(dayIndex, mealIndex) {
+        const day=plan[dayIndex]; if(!day) return;
+        const current=day.meals[mealIndex], r=getRecipe(current.recipeId);
+        const used=new Set(plan.flatMap((d,di)=>d.meals.filter((m,mi)=>di!==dayIndex||mi!==mealIndex).map(m=>m.recipeId)));
+        let pool=candidates(r.type,used);
+        if(pool.length>1) pool=pool.filter(x=>x.id!==r.id);
+        if(!pool.length) { toast("No other matching recipes are available yet."); return; }
+        day.meals[mealIndex]={recipeId:pool[Math.floor(Math.random()*pool.length)].id,servings:current.servings};
+        persist(); renderPlan(); toast("Meal swapped. Your grocery list is updated.");
+      }
+      function replaceDay(index) {
+        const old=plan[index]; if(!old) return;
+        const d=new Date(old.date+"T12:00:00");
+        const used=new Set([...plan.filter((_,i)=>i!==index).flatMap(x=>x.meals.map(m=>m.recipeId)),...old.meals.map(m=>m.recipeId)]);
+        plan[index]=createDay(d,used); persist(); renderPlan(); toast("Day refreshed with new meal ideas.");
+      }
+      function toggleFavorite(id) {
+        favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
+        persist(); refreshPage(); if(activeRecipeId===id) renderRecipeModal();
+        toast(favorites.includes(id)?"Added to your favorites.":"Removed from favorites.");
+      }
+      function refreshPage() {
+        if(currentPage==="plan") renderPlan();
+        if(currentPage==="recipes") renderRecipes();
+        if(currentPage==="favorites") renderFavorites();
+        renderNav();
+      }
+      function renderRecipes() {
+        const target=document.getElementById("page-recipes");
+        const query=(document.getElementById("recipe-search")?.value||"").toLowerCase();
+        const filter=document.getElementById("recipe-filter")?.value||"All meals";
+        const list=recipes.filter(r=>(filter==="All meals"||r.type===filter)&&`${r.name} ${r.description} ${r.tags.join(" ")}`.toLowerCase().includes(query));
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">A collection worth coming back to</div><h1 id="recipes-heading">Recipe box</h1><p class="subtitle">Simple, satisfying food for your everyday.</p></div></div><div class="recipes-toolbar"><input class="field search-field" id="recipe-search" placeholder="Search recipes or ingredients…" aria-label="Search recipes" value="${escapeHtml(query)}"><select class="field" id="recipe-filter" aria-label="Filter by meal type" style="max-width:180px"><option ${filter==="All meals"?"selected":""}>All meals</option>${["Breakfast","Lunch","Dinner","Snack"].map(t=>`<option ${filter===t?"selected":""}>${t}</option>`).join("")}</select></div>${list.length?`<div class="recipe-grid">${list.map(recipeTile).join("")}</div>`:`<div class="section-card empty-state"><div class="empty-emoji">🔎</div><h2>No recipes found</h2><p>Try another search or meal type.</p></div>`}`;
+      }
+      function recipeTile(r) {
+        return `<article class="recipe-tile"><button class="icon-button ${favorites.includes(r.id)?"favorite":""}" style="position:absolute;right:11px;top:11px" data-action="favorite" data-id="${r.id}" aria-label="${favorites.includes(r.id)?"Remove from":"Add to"} favorites">${favorites.includes(r.id)?"♥":"♡"}</button><div class="tile-icon">${r.emoji}</div><button class="meal-title" style="font-size:17px;margin-top:8px" data-action="recipe" data-id="${r.id}">${escapeHtml(r.name)}</button><p>${r.type} · ${r.prep+r.cook} min · ${r.calories} cal</p><div class="recipe-tags">${r.tags.slice(0,3).map(t=>`<span class="tag">${titleCase(t.replace("-"," "))}</span>`).join("")}</div></article>`;
+      }
+      function renderFavorites() {
+        const target=document.getElementById("page-favorites"), list=recipes.filter(r=>favorites.includes(r.id));
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Keep the good ones close</div><h1 id="favorites-heading">Your favorites</h1><p class="subtitle">All the recipes you've saved in one cozy spot.</p></div></div>${list.length?`<div class="recipe-grid">${list.map(recipeTile).join("")}</div>`:`<div class="section-card empty-state"><div class="empty-emoji">♡</div><h2>A place for your go-tos</h2><p>Tap the heart on any recipe to save it here.</p><button class="btn btn-primary" data-nav="recipes">Explore recipes</button></div>`}`;
+      }
+      function formatQty(amount) {
+        if(!Number.isFinite(amount)) return String(amount);
+        const whole=Math.floor(amount), frac=amount-whole;
+        const parts=[[1/8,"⅛"],[1/4,"¼"],[1/3,"⅓"],[3/8,"⅜"],[1/2,"½"],[5/8,"⅝"],[2/3,"⅔"],[3/4,"¾"],[7/8,"⅞"]];
+        let nearest=parts.find(([v])=>Math.abs(frac-v)<.035);
+        if(!nearest) return String(Math.round(amount*10)/10);
+        return `${whole||""}${whole?" ":""}${nearest[1]}`;
+      }
+      function renderRecipeModal() {
+        const r=getRecipe(activeRecipeId); if(!r) return;
+        const factor=modalServings/(Number(r.servings)||2);
+        const stats=[["Prep",`${r.prep} min`],["Cook",`${r.cook} min`],["Total",`${r.prep+r.cook} min`],["Level",r.difficulty]];
+        document.getElementById("modal-content").innerHTML=`<button class="modal-close" data-action="close-modal" aria-label="Close recipe">×</button><div class="eyebrow">${r.emoji} &nbsp;${r.type}</div><h2 id="recipe-modal-title">${escapeHtml(r.name)}</h2><div class="recipe-lede">${escapeHtml(r.description)}</div><div class="recipe-stats">${stats.map(s=>`<div class="recipe-stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join("")}</div><div class="serving-control"><b>Servings</b><button data-action="serving" data-delta="-1" aria-label="Decrease servings">−</button><span>${modalServings}</span><button data-action="serving" data-delta="1" aria-label="Increase servings">+</button></div><div class="recipe-columns"><div><h3>Ingredients</h3><ul class="ingredient-list">${r.ingredients.map(([name,qty,unit])=>`<li><b>${formatQty(qty*factor)} ${unit}</b> ${escapeHtml(name)}</li>`).join("")}</ul><div class="nutrition"><b>Per serving</b><br>${r.calories} calories · ${r.protein}g protein · ${r.carbs}g carbs · ${r.fat}g fat</div></div><div><h3>Let's make it</h3><ol class="instruction-list">${r.instructions.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ol></div></div><div class="modal-actions"><button class="btn" data-action="favorite" data-id="${r.id}">${favorites.includes(r.id)?"♥ Saved to favorites":"♡ Add to favorites"}</button><button class="btn btn-primary" data-action="close-modal">Done</button></div>`;
+      }
+      function openRecipe(id) {
+        activeRecipeId=id; modalServings=Number(plan.flatMap(d=>d.meals).find(m=>m.recipeId===id)?.servings)||Number(preferences.people)||2;
+        document.getElementById("recipe-modal").classList.add("open"); renderRecipeModal(); document.querySelector(".modal-close").focus();
+      }
+      function closeModal() { document.getElementById("recipe-modal").classList.remove("open"); activeRecipeId=null; }
+      function groceryItems() {
+        const combined=new Map();
+        const pantry=preferences.pantry.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+        for(const day of plan) for(const entry of day.meals) {
+          const r=getRecipe(entry.recipeId); if(!r) continue;
+          const factor=(Number(entry.servings)||2)/(Number(r.servings)||2);
+          for(const [name,qty,unit,category] of r.ingredients) {
+            if(pantry.some(have=>name.toLowerCase().includes(have)||have.includes(name.toLowerCase()))) continue;
+            const measure=normalizeMeasure(qty*factor,unit);
+            const key=`${name.toLowerCase()}|${measure.unit}`;
+            if(combined.has(key)) combined.get(key).qty+=measure.qty;
+            else combined.set(key,{id:key,name,qty:measure.qty,unit:measure.unit,category:category||"Other",price:estimatePrice(name)});
+          }
+        }
+        for(const item of customItems) {
+          const key="custom-"+item.id;
+          combined.set(key,{id:key,name:item.name,qty:Number(item.qty)||1,unit:item.unit||"each",category:item.category||"Other",price:0,customId:item.id});
+        }
+        return [...combined.values()].filter(item=>!removedItems.includes(item.id)).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name));
+      }
+      function normalizeMeasure(qty,unit) {
+        const u=unit.toLowerCase().trim();
+        const tsp=["tsp","teaspoon","teaspoons"];
+        const tbsp=["tbsp","tablespoon","tablespoons"];
+        const cups=["cup","cups"];
+        if(tsp.includes(u)) return {qty,unit:"volume"};
+        if(tbsp.includes(u)) return {qty:qty*3,unit:"volume"};
+        if(cups.includes(u)) return {qty:qty*48,unit:"volume"};
+        const aliases={cloves:"clove",slices:"slice",stalks:"stalk",ounces:"oz",ounce:"oz",cans:"can"};
+        return {qty,unit:aliases[u]||u};
+      }
+      function groceryQuantity(item) {
+        if(item.unit==="volume") {
+          let remaining=item.qty, parts=[];
+          if(remaining>=36) {
+            const cups=remaining/48;
+            return `${formatQty(cups)} ${cups>1.01?"cups":"cup"}`;
+          }
+          const cups=Math.floor(remaining/48);
+          if(cups){parts.push(`${formatQty(cups)} cup${cups===1?"":"s"}`);remaining-=cups*48;}
+          const tablespoons=Math.floor(remaining/3);
+          if(tablespoons){parts.push(`${formatQty(tablespoons)} tbsp`);remaining-=tablespoons*3;}
+          if(remaining>0.02) parts.push(`${formatQty(remaining)} tsp`);
+          return parts.join(" + ")||"0 tsp";
+        }
+        const unit=item.unit==="each"?"each":item.unit==="oz"?"oz":`${item.unit}${item.qty>1.01&&!item.unit.endsWith("s")?"s":""}`;
+        return `${formatQty(item.qty)} ${unit}`;
+      }
+      function estimatePrice(name) {
+        const n=name.toLowerCase();
+        if(/chicken|salmon|turkey|tuna/.test(n)) return 5.2;
+        if(/olive oil|almond butter|tahini|pesto/.test(n)) return 2.4;
+        if(/eggs|cheese|yogurt|milk|feta|parmesan/.test(n)) return 1.6;
+        if(/oats|rice|pasta|beans|lentils|tortilla|bread/.test(n)) return 1.3;
+        return 1.1;
+      }
+      function renderGroceries() {
+        const target=document.getElementById("page-groceries"), items=groceryItems();
+        const categories=["Produce","Meat and seafood","Dairy and eggs","Grains and bakery","Canned and packaged foods","Spices and sauces","Frozen foods","Other"];
+        const groups=categories.map(cat=>({cat,items:items.filter(i=>i.category===cat)})).filter(g=>g.items.length);
+        const total=items.reduce((s,x)=>s+x.price,0), budget=Number(preferences.budget)||0, percent=budget?Math.min(100,total/budget*100):0;
+        const budgetStatus=total<=budget?`$${(budget-total).toFixed(0)} under your $${budget} budget`:`$${(total-budget).toFixed(0)} over your $${budget} budget`;
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Everything for a delicious week</div><h1 id="groceries-heading">Grocery list</h1><p class="subtitle">${items.length} ingredients, combined from your meal plan.${preferences.pantry?` Pantry items excluded: ${escapeHtml(preferences.pantry)}.`:""}</p></div><div class="actions"><button class="btn" data-action="download">↓ Download</button><button class="btn btn-primary" data-action="print">⎙ Print list</button></div></div><div class="grocery-layout"><div class="section-card"><div class="section-card-header"><h2 class="section-title">Shopping list</h2><button class="btn btn-small btn-quiet" data-action="clear-checked">Clear completed</button></div>${groups.length?groups.map(g=>`<div class="grocery-group"><h3>${g.cat} <span style="font-weight:400;color:#969e96">· ${g.items.length}</span></h3>${g.items.map(item=>renderGroceryItem(item)).join("")}</div>`).join(""):`<div class="empty-state"><div class="empty-emoji">🧺</div><h2>Your list is empty</h2><p>Generate a meal plan to fill your basket.</p></div>`}<form class="add-grocery" id="add-grocery-form"><input class="field" name="name" placeholder="Add an item…" aria-label="New grocery item" required maxlength="70"><input class="field" name="qty" type="number" min=".1" step=".1" value="1" aria-label="Quantity"><button class="btn btn-primary" type="submit" aria-label="Add grocery item">＋ Add</button></form></div><aside class="budget-card"><div class="label">Estimated weekly basket</div><div class="budget-value">$${total.toFixed(0)}</div><div class="budget-note">Approximate cost for your planned ingredients. Prices vary by store and location.</div><div class="progress" role="progressbar" aria-valuenow="${Math.round(percent)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${percent}%"></span></div><div class="budget-note">${budgetStatus}</div><div class="list-actions"><button class="btn btn-small" data-action="download">↓ Download .txt</button><button class="btn btn-small" data-action="print">⎙ Print</button></div></aside></div>`;
+      }
+      function renderGroceryItem(item) {
+        const checked=checkedItems.includes(item.id);
+        if(item.customId)         return `<div class="grocery-row ${checked?"checked":""}" data-item="${escapeHtml(item.id)}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span><span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span><button class="icon-button" data-action="edit-item" data-id="${escapeHtml(item.customId)}" aria-label="Edit ${escapeHtml(item.name)}">✎</button><button class="icon-button" data-action="delete-item" data-id="${escapeHtml(item.customId)}" aria-label="Delete ${escapeHtml(item.name)}">×</button></div>`;
+        return `<div class="grocery-row ${checked?"checked":""}"><input type="checkbox" ${checked?"checked":""} data-action="check-item" data-id="${escapeHtml(item.id)}" aria-label="Mark ${escapeHtml(item.name)} purchased"><span class="grocery-name">${escapeHtml(item.name)}</span><span class="grocery-qty">${escapeHtml(groceryQuantity(item))}</span></div>`;
+      }
+      function renderSettings() {
+        const target=document.getElementById("page-settings");
+        target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Make it yours</div><h1 id="settings-heading">Your preferences</h1><p class="subtitle">A few details help us plan meals that fit your life.</p></div></div><form class="section-card" id="preferences-form"><div class="settings-grid"><div class="form-field"><label for="people">How many people?</label><input class="field" id="people" name="people" type="number" min="1" max="12" value="${preferences.people}" required><small>Recipes and grocery quantities scale with your household.</small></div><div class="form-field"><label for="diet">Dietary preference</label><select class="field" id="diet" name="diet"><option value="none">No preference</option><option value="vegetarian">Vegetarian</option><option value="vegan">Vegan</option><option value="keto">Keto</option><option value="low-carb">Low-carb</option><option value="gluten-free">Gluten-free</option></select></div><div class="form-field full"><label for="avoid">Allergies or ingredients to avoid</label><input class="field" id="avoid" name="avoid" placeholder="e.g. peanuts, shellfish, cilantro" value="${escapeHtml(preferences.avoid)}"><small>Separate ingredients with commas. We'll exclude recipes containing them.</small></div><div class="form-field full"><label>Meals to plan</label><div class="checkbox-group">${["Breakfast","Lunch","Dinner"].map(x=>`<label class="check-chip"><input type="checkbox" name="meals" value="${x}" ${preferences.meals.includes(x)?"checked":""}> ${x}</label>`).join("")}<label class="check-chip"><input type="checkbox" name="snacks" ${preferences.snacks?"checked":""}> Snacks</label></div><small>Select at least one meal type.</small></div><div class="form-field"><label for="budget">Weekly grocery budget</label><input class="field" id="budget" name="budget" type="number" min="1" max="10000" step="1" value="${preferences.budget}" required></div><div class="form-field"><label for="skill">Cooking skill</label><select class="field" id="skill" name="skill"><option>Any</option><option>Beginner</option><option>Comfortable</option><option>Confident</option></select></div><div class="form-field"><label for="maxTime">Max total time per meal</label><select class="field" id="maxTime" name="maxTime"><option value="20">20 minutes</option><option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option><option value="90">90 minutes</option></select></div><div class="form-field"><label for="pantry">Ingredients you already have</label><input class="field" id="pantry" name="pantry" value="${escapeHtml(preferences.pantry)}" placeholder="e.g. olive oil, rice"><small>Saved for reference while planning.</small></div><div class="form-field full"><label class="check-chip"><input type="checkbox" name="leftovers" ${preferences.leftovers?"checked":""}> I'm happy to have leftovers and repeat meals</label></div></div><div class="settings-footer"><button type="button" class="btn" data-action="reset-preferences">Reset defaults</button><button type="submit" class="btn btn-primary">Save preferences</button></div></form>`;
+        document.getElementById("diet").value=preferences.diet;
+        document.getElementById("skill").value=preferences.skill;
+        document.getElementById("maxTime").value=String(preferences.maxTime);
+      }
+      function savePreferences(form) {
+        const fd=new FormData(form), people=Number(fd.get("people")), budget=Number(fd.get("budget"));
+        const meals=fd.getAll("meals");
+        if(!Number.isInteger(people)||people<1||people>12) { toast("Choose between 1 and 12 people."); form.elements.people.focus(); return; }
+        if(!Number.isFinite(budget)||budget<1||budget>10000) { toast("Enter a weekly budget between $1 and $10,000."); form.elements.budget.focus(); return; }
+        if(!meals.length) { toast("Choose at least one meal type."); return; }
+        preferences={people,diet:fd.get("diet"),avoid:String(fd.get("avoid")||"").trim(),meals,snacks:fd.has("snacks"),budget,skill:fd.get("skill"),maxTime:Number(fd.get("maxTime")),pantry:String(fd.get("pantry")||"").trim(),leftovers:fd.has("leftovers")};
+        persist(); generatePlan(false); setPage("plan"); toast("Preferences saved and your plan is refreshed.");
+      }
+      function downloadList() {
+        const items=groceryItems(), categories=[...new Set(items.map(i=>i.category))];
+        const text=["HOMEMADE — WEEKLY GROCERY LIST","",...categories.flatMap(cat=>[cat,...items.filter(x=>x.category===cat).map(x=>`[${checkedItems.includes(x.id)?"x":" "}] ${groceryQuantity(x)} ${x.name}`), ""]),`Estimated total: $${items.reduce((s,x)=>s+x.price,0).toFixed(2)}`].join("\n");
+        const link=document.createElement("a"); link.href=URL.createObjectURL(new Blob([text],{type:"text/plain"})); link.download="homemade-grocery-list.txt"; link.click(); URL.revokeObjectURL(link.href); toast("Grocery list downloaded.");
+      }
+      document.addEventListener("click", e=>{
+        const nav=e.target.closest("[data-nav]"); if(nav){setPage(nav.dataset.nav);return;}
+        const btn=e.target.closest("[data-action]"); if(!btn)return;
+        const {action,id}=btn.dataset;
+        if(action==="generate") generatePlan();
+        if(action==="go-settings") setPage("settings");
+        if(action==="replace-day") replaceDay(Number(btn.dataset.day));
+        if(action==="regenerate") replaceMeal(Number(btn.dataset.day),Number(btn.dataset.meal));
+        if(action==="favorite") toggleFavorite(id);
+        if(action==="recipe") openRecipe(id);
+        if(action==="close-modal") closeModal();
+        if(action==="serving"){modalServings=Math.max(1,Math.min(12,modalServings+Number(btn.dataset.delta)));renderRecipeModal();}
+        if(action==="check-item"){const key=id;checkedItems=checkedItems.includes(key)?checkedItems.filter(x=>x!==key):[...checkedItems,key];persist();renderGroceries();}
+        if(action==="clear-checked"){removedItems=[...new Set([...removedItems,...checkedItems])];checkedItems=[];persist();renderGroceries();renderNav();toast("Completed items cleared from your list.");}
+        if(action==="download") downloadList();
+        if(action==="print") window.print();
+        if(action==="delete-item"){customItems=customItems.filter(x=>x.id!==id);checkedItems=checkedItems.filter(x=>x!=="custom-"+id);persist();renderGroceries();toast("Item removed.");}
+        if(action==="edit-item") {
+          const item=customItems.find(x=>x.id===id); if(!item)return;
+          const row=btn.closest(".grocery-row");
+          row.innerHTML=`<form class="inline-edit" data-edit-id="${escapeHtml(id)}"><input class="field" name="name" value="${escapeHtml(item.name)}" aria-label="Edit item name" required><input class="field" name="qty" type="number" min=".1" step=".1" value="${escapeHtml(item.qty)}" aria-label="Edit item quantity"><button class="btn btn-small btn-primary" type="submit">Save</button><button class="btn btn-small" type="button" data-action="cancel-edit">×</button></form>`;
+          row.querySelector("input").focus();
+        }
+        if(action==="cancel-edit")renderGroceries();
+        if(action==="reset-preferences"){preferences={...defaults};persist();renderSettings();toast("Preferences reset.");}
+      });
+      document.addEventListener("submit",e=>{
+        if(e.target.id==="preferences-form"){e.preventDefault();savePreferences(e.target);}
+        if(e.target.id==="add-grocery-form"){e.preventDefault();const fd=new FormData(e.target);const name=String(fd.get("name")).trim();if(!name){toast("Enter an item name first.");return;}const id=Date.now().toString(36);customItems.push({id,name,qty:Number(fd.get("qty"))||1,unit:"each",category:"Other"});persist();renderGroceries();toast("Added to your list.");}
+        if(e.target.matches("[data-edit-id]")){e.preventDefault();const id=e.target.dataset.editId,fd=new FormData(e.target),item=customItems.find(x=>x.id===id);if(item){item.name=String(fd.get("name")).trim();item.qty=Number(fd.get("qty"))||1;persist();renderGroceries();toast("Grocery item updated.");}}
+      });
+      document.addEventListener("input",e=>{if(e.target.id==="recipe-search"){const pos=e.target.selectionStart;renderRecipes();const input=document.getElementById("recipe-search");input.focus();input.setSelectionRange(pos,pos);}});
+      document.addEventListener("change",e=>{if(e.target.id==="recipe-filter")renderRecipes();});
+      document.getElementById("recipe-modal").addEventListener("click",e=>{if(e.target.id==="recipe-modal")closeModal();});
+      document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+      document.getElementById("top-date").textContent=new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric"}).format(new Date());
+      ensurePlan(); renderNav(); renderPlan();
+    })();
+  </script>
+</body>
+</html>
