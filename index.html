@@ -3,22 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f6f1">
+  <meta name="theme-color" content="#F6F3EB">
   <title>Homemade — meal planning, made easy</title>
   <style>
     :root {
-      --paper: #f7f6f1;
-      --white: #fffefa;
-      --ink: #25372e;
-      --muted: #788078;
-      --green: #37684f;
-      --green-dark: #294d3a;
-      --sage: #e7eee6;
-      --line: #e8e8df;
-      --orange: #e89961;
-      --orange-light: #fbefe4;
-      --shadow: 0 8px 30px rgba(37, 55, 46, .06);
-      --radius: 18px;
+      --paper: #F6F3EB;
+      --white: #F6F3EB;
+      --ink: #35302B;
+      --muted: #4B2B1E;
+      --green: #879B59;
+      --green-dark: #4B2B1E;
+      --sage: #B4D9D5;
+      --line: #F0B999;
+      --orange: #A75D32;
+      --orange-light: #F0B999;
+      --mustard: #EDB54F;
+      --peach: #F0B999;
+      --teal: #79A5B2;
+      --coral: #D86F6B;
+      --shadow: 0 12px 30px rgba(75, 43, 30, .11);
+      --radius: 20px;
     }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; }
@@ -102,6 +106,17 @@
     .recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
     .recipe-tile { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 17px; min-height: 155px; }
     .recipe-tile .tile-icon { font-size: 24px; }
+    .recipe-tile .tile-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(180, 217, 213, .7);
+    }
+    .recipe-tile:nth-child(4n + 2) .tile-icon { background: rgba(240, 185, 153, .7); }
+    .recipe-tile:nth-child(4n + 3) .tile-icon { background: rgba(237, 181, 79, .55); }
+    .recipe-tile:nth-child(4n + 4) .tile-icon { background: rgba(216, 111, 107, .3); }
     .recipe-tile .meal-title { margin-right: 35px; }
     .recipe-tile h3 { font-family: Georgia, serif; font-size: 17px; margin: 12px 30px 6px 0; line-height: 1.2; }
     .recipe-tile p { font-size: 11px; color: var(--muted); margin: 0 0 12px; }
@@ -246,6 +261,168 @@
       .section-card { border: 0; padding: 0; }
       .grocery-group { break-inside: avoid; }
     }
+    body {
+      background:
+        radial-gradient(circle at 92% 10%, rgba(180, 217, 213, .5), transparent 23rem),
+        radial-gradient(circle at 4% 62%, rgba(240, 185, 153, .24), transparent 21rem),
+        var(--paper);
+      color: var(--ink);
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+      outline-color: var(--mustard);
+    }
+    .app-shell { display: block; min-height: 100vh; padding-bottom: 125px; }
+    .sidebar { display: none; }
+    .main { padding: 0 42px 40px; }
+    .topbar {
+      justify-content: space-between;
+      border-bottom-color: rgba(75, 43, 30, .15);
+    }
+    .mobile-brand { display: flex; align-items: center; gap: 9px; font-family: Georgia, serif; font-size: 21px; font-weight: 700; color: var(--ink); }
+    .brand-mark { background: var(--orange); color: var(--paper); }
+    .top-avatar, .avatar { background: var(--peach, #F0B999); color: var(--ink); }
+    .eyebrow, .meal-type { color: var(--orange); }
+    h1, .section-title, .meal-title, .recipe-tile h3, .empty-state h2, .modal h2, .recipe-columns h3 { color: #4B2B1E; }
+    .subtitle, .meal-description, .week-sub, .week-metric span, .meal-meta, .rating-summary,
+    .rating-control-label, .grocery-qty, .grocery-meal, .budget-note, .form-field small,
+    .profile-sub, .today-label { color: rgba(53, 48, 43, .72); }
+    .grocery-group-count { color: rgba(53, 48, 43, .65); font-weight: 400; }
+    .grocery-group h3, .rating-zero, .shopping-toggle button { color: #4B2B1E; }
+    .meal-empty { color: var(--ink); border-color: var(--teal); }
+    .btn {
+      border-color: rgba(75, 43, 30, .2);
+      border-radius: 12px;
+      background: var(--sage);
+      color: var(--ink);
+      box-shadow: 0 3px 10px rgba(75, 43, 30, .06);
+    }
+    .btn:hover { border-color: var(--orange); box-shadow: 0 7px 16px rgba(75, 43, 30, .12); }
+    .btn-primary { background: var(--mustard); color: var(--ink); border-color: var(--mustard); }
+    .btn-primary:hover { background: var(--coral); border-color: var(--coral); color: var(--paper); }
+    .btn-quiet { background: transparent; box-shadow: none; }
+    .week-strip, .budget-card { background: rgba(135, 155, 89, .2); }
+    .week-icon { background: var(--mustard); }
+    .week-metric { border-left-color: rgba(75, 43, 30, .2); }
+    .meal-card, .recipe-tile, .section-card {
+      background: rgba(246, 243, 235, .94);
+      border-color: rgba(75, 43, 30, .15);
+      border-radius: 18px;
+      box-shadow: 0 5px 16px rgba(75, 43, 30, .06);
+    }
+    .meal-card { border-left: 4px solid var(--teal); }
+    .meal-card:nth-child(4n + 2) { border-left-color: var(--mustard); }
+    .meal-card:nth-child(4n + 3) { border-left-color: var(--coral); }
+    .meal-card:nth-child(4n + 4) { border-left-color: var(--green); }
+    .meal-card:hover, .recipe-tile:hover, .section-card:hover {
+      border-color: rgba(167, 93, 50, .5);
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+    .meal-title:hover, .icon-button:hover { color: var(--orange); }
+    .icon-button.favorite, .rating-stars, .rating-choice { color: var(--coral); }
+    .icon-button:hover, .rating-choice:hover, .rating-choice[aria-pressed="true"] { background: rgba(216, 111, 107, .16); }
+    .tag { background: rgba(180, 217, 213, .62); color: #35302B; }
+    .tag-difficulty { background: rgba(240, 185, 153, .5); color: #4B2B1E; }
+    .callout { background: rgba(240, 185, 153, .45); color: #4B2B1E; }
+    .field { border-color: rgba(75, 43, 30, .22); background: var(--paper); }
+    .shopping-toggle { background: rgba(180, 217, 213, .5); }
+    .shopping-toggle button[aria-pressed="true"] { background: var(--mustard); color: var(--ink); }
+    .grocery-row input[type=checkbox], .check-chip input { accent-color: var(--orange); }
+    .progress { background: rgba(135, 155, 89, .35); }
+    .progress span { background: var(--green); }
+    .check-chip { background: rgba(180, 217, 213, .35); color: var(--ink); }
+    .toast { background: #4B2B1E; bottom: 105px; }
+    .modal-backdrop { background: rgba(53, 48, 43, .58); }
+    .modal-close { background: rgba(180, 217, 213, .6); color: var(--ink); }
+    .nutrition { background: rgba(180, 217, 213, .42); color: var(--ink); }
+    .mobile-nav {
+      display: flex;
+      position: fixed;
+      z-index: 25;
+      left: 50%;
+      right: auto;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(940px, calc(100% - 36px));
+      justify-content: space-around;
+      gap: 5px;
+      padding: 9px;
+      padding-bottom: max(9px, env(safe-area-inset-bottom));
+      background: #4B2B1E;
+      border: 1px solid rgba(246, 243, 235, .16);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(75, 43, 30, .28);
+    }
+    .mobile-nav .nav-link {
+      position: relative;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0;
+      width: auto;
+      padding: 8px 10px;
+      border-radius: 14px;
+      color: var(--paper);
+      font-size: 11px;
+      text-align: center;
+    }
+    .mobile-nav .nav-link:hover { background: rgba(246, 243, 235, .14); color: var(--paper); }
+    .mobile-nav .nav-link.active { background: var(--mustard); color: #4B2B1E; }
+    .mobile-nav .nav-icon { width: auto; font-size: 19px; line-height: 1; color: var(--mustard); transition: transform .18s ease, color .18s ease; }
+    .mobile-nav .nav-link:nth-child(2) .nav-icon { color: #B4D9D5; }
+    .mobile-nav .nav-link:nth-child(3) .nav-icon { color: #F0B999; }
+    .mobile-nav .nav-link:nth-child(4) .nav-icon { color: #D86F6B; }
+    .mobile-nav .nav-link:nth-child(5) .nav-icon { color: #879B59; }
+    .mobile-nav .nav-link.active .nav-icon { color: #4B2B1E; transform: translateY(-2px) scale(1.08); }
+    .mobile-nav .nav-count {
+      position: absolute;
+      top: 3px;
+      right: 12px;
+      margin: 0;
+      border-radius: 20px;
+      background: var(--coral);
+      color: var(--paper);
+      padding: 2px 5px;
+      font-size: 9px;
+    }
+    .content-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 32px 0 0;
+      padding: 17px 20px;
+      border-radius: 16px;
+      background: rgba(180, 217, 213, .45);
+    }
+    .content-footer .weekly-note { margin: 0; padding: 0; background: transparent; }
+    .content-footer .weekly-note .note-kicker { color: #4B2B1E; }
+    .content-footer .weekly-note p { font-size: 15px; }
+    .content-footer .profile { border: 0; padding: 0; }
+    @media (max-width: 760px) {
+      .app-shell { padding-bottom: 112px; }
+      .sidebar { display: none; }
+      .main { padding: 0 18px 30px; }
+      .topbar { height: 64px; margin-bottom: 25px; }
+      .mobile-brand { font-size: 19px; }
+      .mobile-brand .brand-mark { width: 32px; height: 32px; border-radius: 11px; font-size: 17px; }
+      .topbar .today-label { display: none; }
+      .mobile-nav { left: 0; right: 0; bottom: 0; transform: none; width: 100%; gap: 1px; border-radius: 18px 18px 0 0; padding: 7px 3px max(7px, env(safe-area-inset-bottom)); }
+      .mobile-nav .nav-link { gap: 4px; padding: 7px 3px; font-size: 9px; }
+      .mobile-nav .nav-icon { font-size: 17px; }
+      .mobile-nav .nav-count { display: none; }
+      .toast { bottom: 95px; }
+      .content-footer { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 470px) {
+      .main { padding-left: 13px; padding-right: 13px; }
+      .mobile-nav .nav-link { font-size: 8px; }
+    }
+    @media print {
+      .app-shell { padding-bottom: 0; }
+      .content-footer { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -255,8 +432,6 @@
       <div class="nav-label">Your kitchen</div>
       <nav class="nav-list" id="desktop-nav"></nav>
       <div class="sidebar-spacer"></div>
-      <div class="weekly-note"><div class="note-kicker">A gentle reminder</div><p>Good food doesn't have to be complicated.</p></div>
-      <div class="profile"><div class="avatar">H</div><div><div class="profile-name">Home cook</div><div class="profile-sub">Your personal kitchen</div></div></div>
     </aside>
     <main class="main">
       <header class="topbar">
@@ -269,10 +444,14 @@
         <section class="page" id="page-groceries" aria-labelledby="groceries-heading"></section>
         <section class="page" id="page-favorites" aria-labelledby="favorites-heading"></section>
         <section class="page" id="page-settings" aria-labelledby="settings-heading"></section>
+        <footer class="content-footer">
+          <div class="weekly-note"><div class="note-kicker">A gentle reminder</div><p>Good food doesn't have to be complicated.</p></div>
+          <div class="profile"><div class="avatar">H</div><div><div class="profile-name">Home cook</div><div class="profile-sub">Your personal kitchen</div></div></div>
+        </footer>
       </div>
     </main>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation"></nav>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Main navigation"></nav>
   <div class="modal-backdrop" id="recipe-modal" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title"><div class="modal" id="modal-content"></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
@@ -664,7 +843,7 @@
         const groups=categories.map(cat=>({cat,items:items.filter(i=>i.category===cat)})).filter(g=>g.items.length);
         const total=items.reduce((s,x)=>s+x.price,0), budget=Number(preferences.budget)||0, percent=budget?Math.min(100,total/budget*100):0;
         const budgetStatus=total<=budget?`$${(budget-total).toFixed(0)} under your $${budget} budget`:`$${(total-budget).toFixed(0)} over your $${budget} budget`;
-        const listContent=shoppingView==="daily"?dailyGrocerySections():groups.map(g=>`<div class="grocery-group"><h3>${g.cat} <span style="font-weight:400;color:#969e96">· ${g.items.length}</span></h3>${g.items.map(item=>renderGroceryItem(item)).join("")}</div>`).join("");
+        const listContent=shoppingView==="daily"?dailyGrocerySections():groups.map(g=>`<div class="grocery-group"><h3>${g.cat} <span class="grocery-group-count">· ${g.items.length}</span></h3>${g.items.map(item=>renderGroceryItem(item)).join("")}</div>`).join("");
         target.innerHTML=`<div class="page-heading"><div><div class="eyebrow">Everything for a delicious week</div><h1 id="groceries-heading">Grocery list</h1><p class="subtitle">${items.length} unique ingredients this week.${preferences.pantry?` Pantry items excluded: ${escapeHtml(preferences.pantry)}.`:""}</p></div><div class="actions"><button class="btn" data-action="download">↓ Download</button><button class="btn btn-primary" data-action="print">⎙ Print list</button></div></div><div class="grocery-layout"><div class="section-card"><div class="section-card-header"><h2 class="section-title">Shopping list</h2>${shoppingViewToggle()}<button class="btn btn-small btn-quiet" data-action="clear-checked">Clear completed</button></div>${listContent||`<div class="empty-state"><div class="empty-emoji">🧺</div><h2>Your list is empty</h2><p>Generate a meal plan or add an item to fill your basket.</p></div>`}<form class="add-grocery" id="add-grocery-form"><input class="field" name="name" placeholder="Add an item…" aria-label="New grocery item" required maxlength="70"><input class="field" name="qty" type="number" min=".1" step=".1" value="1" aria-label="Quantity"><button class="btn btn-primary" type="submit" aria-label="Add grocery item">＋ Add</button></form></div><aside class="budget-card"><div class="label">Estimated weekly basket</div><div class="budget-value">$${total.toFixed(0)}</div><div class="budget-note">Approximate cost for your planned ingredients. Prices vary by store and location.</div><div class="progress" role="progressbar" aria-valuenow="${Math.round(percent)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${percent}%"></span></div><div class="budget-note">${budgetStatus}</div><div class="list-actions"><button class="btn btn-small" data-action="download">↓ Download .txt</button><button class="btn btn-small" data-action="print">⎙ Print</button></div></aside></div>`;
       }
       function renderGroceryItem(item) {
